@@ -15,6 +15,7 @@ DATA_DIR = os.path.join(PROJECT_DIR, "src", "data")
 
 if not API_KEY or not SITE_ID:
     print("Error: WIX_API_KEY and WIX_SITE_ID environment variables required")
+    print("Set them in Vercel dashboard: Project Settings → Environment Variables")
     sys.exit(1)
 
 MEDIA_API = "https://www.wixapis.com/site-media/v1"
