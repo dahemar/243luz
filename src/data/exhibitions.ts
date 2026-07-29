@@ -22,7 +22,7 @@ const exhibitions: Exhibition[] = [
     startDate: "2023-06-17",
     endDate: "2023-07-22",
     description: "",
-    featuredImage: "/media/Jack Otway _ Richard Tinkler,  June 17th – July 22nd 2023/243 LUZ - Jack Otway %26 Richard Tinkler-Web-1.jpg",
+    featuredImage: "/media/Jack Otway _ Richard Tinkler,  June 17th – July 22nd 2023/243 LUZ - Jack Otway - Richard Tinkler-Web-1.jpg",
     folder: "Jack Otway _ Richard Tinkler,  June 17th – July 22nd 2023",
   },
   {
@@ -132,8 +132,8 @@ const exhibitions: Exhibition[] = [
     startDate: "2025-04-15",
     endDate: "2025-05-30",
     description: "August Boch & Elia Munoz",
-    featuredImage: "/media/August Boch & Elia Munoz - A Perfect Vacuum/243_Luz-AugustBoch&EliaMunoz-APerfectVacuum-01.jpg",
-    folder: "August Boch & Elia Munoz - A Perfect Vacuum",
+    featuredImage: "/media/August Boch - Elia Munoz - A Perfect Vacuum/243_Luz-AugustBoch-EliaMunoz-APerfectVacuum-01.jpg",
+    folder: "August Boch - Elia Munoz - A Perfect Vacuum",
   },
   {
     id: "nasir-mazhar-i-always-wanted",

@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="243 Luz — An art gallery in London" />
     <title>243 Luz</title>
-    <link rel="icon" type="image/jpeg" href="/media/243 Lux %26 Co logo_edited.jpg" />
+    <link rel="icon" type="image/jpeg" href="/media/logo-favicon.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" />
@@ -18,7 +18,7 @@
     <header class="site-header">
       <nav class="nav">
         <a href="/" class="nav-logo">
-          <img src="/media/243 Lux %26 Co logo.jpg" alt="243 Luz" class="logo-img" />
+          <img src="/media/logo.jpg" alt="243 Luz" class="logo-img" />
         </a>
         <div class="nav-links">
           <a href="/exhibitions">Exhibitions</a>
@@ -54,12 +54,12 @@
     line-height: 1.5;
     max-width: 1080px;
     margin: 0 auto;
-    padding: 0 1.5rem 6rem;
+    padding: 0 0.75rem 6rem;
   }
 
   .site-header {
-    padding: 2rem 0 1.5rem;
-    margin-bottom: 2.5rem;
+    padding: 0.75rem 0 1rem;
+    margin-bottom: 2rem;
   }
 
   .nav {
@@ -119,15 +119,21 @@
   }
 
   @media (max-width: 640px) {
+    .site-header {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 100;
+    }
     body {
-      padding: 0 1rem;
+      padding: 0 0.5rem 6rem;
     }
     .nav-links {
       gap: 1.25rem;
     }
     .site-header {
-      padding: 1.25rem 0 1rem;
-      margin-bottom: 2rem;
+      padding: 0.75rem 0 0.75rem;
+      margin-bottom: 1.5rem;
     }
   }
 </style>

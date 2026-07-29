@@ -1,8 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getArtists, getArtistById, getArtistExhibitions } from "../../data";
-import exhibitionImages from "../../data/exhibitionImages";
-import ImageViewer from "../../components/ImageViewer.astro";
 
 export function getStaticPaths() {
   const artists = getArtists();
@@ -27,6 +25,7 @@ function formatDate(dateStr: string): string {
 <BaseLayout>
   <div class="artist-detail">
     <header class="artist-header">
+      <a href="/artists" class="back-link">← Artists</a>
       <h1>{artist.name}</h1>
       {artist.biography && (
         <p class="artist-bio">{artist.biography}</p>
@@ -53,27 +52,7 @@ function formatDate(dateStr: string): string {
       )
     }
 
-    {
-      exhibitions.map((exhibition) => {
-        const images = exhibitionImages[exhibition.folder] || [];
-        if (images.length === 0) return null;
-        const imagePaths = images.map((img) => `/media/${exhibition.folder}/${img}`);
-        return (
-          <section class="artist-works">
-            <h2 class="section-heading">Works — {exhibition.title}</h2>
-            <ImageViewer images={imagePaths}>
-              <div class="works-grid">
-                {imagePaths.map((src) => (
-                  <figure class="work-figure">
-                    <img src={src} alt="" loading="lazy" />
-                  </figure>
-                ))}
-              </div>
-            </ImageViewer>
-          </section>
-        );
-      })
-    }
+
   </div>
 </BaseLayout>
 
@@ -83,6 +62,20 @@ function formatDate(dateStr: string): string {
 
   .artist-header {
     margin-bottom: 3rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.65rem;
+    color: #aaa;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: #1a1a1a;
   }
 
   .artist-header h1 {
@@ -104,8 +97,6 @@ function formatDate(dateStr: string): string {
     color: #aaa;
     font-style: italic;
     margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e5e5e5;
   }
 
   .artist-exhibitions {
@@ -127,7 +118,6 @@ function formatDate(dateStr: string): string {
     text-decoration: none;
     color: #1a1a1a;
     padding: 0.5rem 0;
-    border-bottom: 1px solid #f0f0f0;
   }
 
   .exhibition-name {
@@ -140,28 +130,6 @@ function formatDate(dateStr: string): string {
     color: #aaa;
     white-space: nowrap;
     margin-left: 1.5rem;
-  }
-
-  .artist-works {
-    margin-bottom: 3rem;
-  }
-
-  .works-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .work-figure {
-    margin: 0;
-    line-height: 0;
-  }
-
-  .work-figure img {
-    display: block;
-    width: 100%;
-    height: auto;
-    background: #f8f8f8;
   }
 
   @media (max-width: 640px) {

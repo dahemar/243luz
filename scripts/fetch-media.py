@@ -47,6 +47,10 @@ def paginate(path, params, key):
     return items
 
 
+def sanitize(name):
+    return name.replace("&", "-")
+
+
 def download(url, dest):
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     req = urllib.request.Request(url)
@@ -61,7 +65,7 @@ def main():
     folder_map = {}
     for f in folders:
         fid = f["id"]
-        name = (f.get("displayName") or fid[:8]).strip()
+        name = sanitize((f.get("displayName") or fid[:8]).strip())
         folder_map[fid] = name
     print(f"  {len(folders)} folders")
 
@@ -69,13 +73,13 @@ def main():
     all_by_folder = {}
 
     root_files = paginate("files", {"paging.limit": 100}, "files")
-    root_names = [rf.get("displayName", "") for rf in root_files if rf.get("displayName")]
+    root_names = [sanitize(rf.get("displayName", "")) for rf in root_files if rf.get("displayName")]
     all_by_folder[""] = root_names
     print(f"  {len(root_names)} files in root")
 
     for fid, fname in folder_map.items():
         f_files = paginate("files", {"paging.limit": 100, "parentFolderId": fid}, "files")
-        names = [ff.get("displayName", "") for ff in f_files if ff.get("displayName")]
+        names = [sanitize(ff.get("displayName", "")) for ff in f_files if ff.get("displayName")]
         all_by_folder[fname] = names
         if names:
             print(f"  {len(names)} files in {fname}")
@@ -88,7 +92,7 @@ def main():
     root_downloaded = []
     for rf in root_files:
         url = rf.get("url", "")
-        name = rf.get("displayName", "")
+        name = sanitize(rf.get("displayName", ""))
         if not url or not name:
             continue
         dest = os.path.join(OUTPUT_DIR, name)
@@ -110,7 +114,7 @@ def main():
         f_files = paginate("files", {"paging.limit": 100, "parentFolderId": fid}, "files")
         for ff in f_files:
             url = ff.get("url", "")
-            name = ff.get("displayName", "")
+            name = sanitize(ff.get("displayName", ""))
             if not url or not name:
                 continue
             dest = os.path.join(OUTPUT_DIR, fname, name)

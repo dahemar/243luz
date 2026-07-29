@@ -35,6 +35,7 @@ function formatDate(dateStr: string): string {
 <BaseLayout>
   <div class="exhibition-detail">
     <header class="exhibition-header">
+      <a href="/exhibitions" class="back-link">← Exhibitions</a>
       <h1>{exhibition.title}</h1>
       <p class="exhibition-dates">
         {formatDate(exhibition.startDate)} — {formatDate(exhibition.endDate)}
@@ -81,6 +82,20 @@ function formatDate(dateStr: string): string {
 
   .exhibition-header {
     margin-bottom: 3rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.65rem;
+    color: #aaa;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: #1a1a1a;
   }
 
   .exhibition-header h1 {
