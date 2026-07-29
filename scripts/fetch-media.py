@@ -132,6 +132,28 @@ def main():
 
     print(f"  Downloaded: {count} files")
 
+    # Post-process: copy any assets that aren't on Wix CDN
+    assets_dir = os.path.join(PROJECT_DIR, "src", "assets")
+    if os.path.isdir(assets_dir):
+        for fname in os.listdir(assets_dir):
+            src = os.path.join(assets_dir, fname)
+            dest = os.path.join(OUTPUT_DIR, fname)
+            if os.path.isfile(src) and not os.path.exists(dest):
+                import shutil
+                shutil.copy2(src, dest)
+                print(f"  Asset copied: {fname}")
+
+    # Ensure PDF-generated images reach the correct folder
+    for fname in ("page-1.jpg", "page-2.jpg"):
+        src = os.path.join(assets_dir, fname) if os.path.isdir(assets_dir) else ""
+        folder = "Ben Gomes Outisde"
+        dest = os.path.join(OUTPUT_DIR, folder, fname)
+        if src and os.path.isfile(src) and not os.path.exists(dest):
+            import shutil
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            shutil.copy2(src, dest)
+            print(f"  PDF page copied: {folder}/{fname}")
+
     print("[4/4] Generating exhibitionImages.ts...")
     lines = ["const exhibitionImages: Record<string, string[]> = {"]
     # Root
