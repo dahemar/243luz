@@ -172,7 +172,7 @@ const exhibitions: Exhibition[] = [
     startDate: "2025-11-01",
     endDate: "2025-11-30",
     description: "Ben Gomes",
-    featuredImage: "/media/benGomes.jpeg",
+    featuredImage: "/media/Ben Gomes Outisde/page-1.jpg",
     folder: "Ben Gomes Outisde",
   },
   {

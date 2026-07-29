@@ -1,7 +1,5 @@
 const exhibitionImages: Record<string, string[]> = {
   "243Luz": [
-    "Logo-high res",
-    "Logo-low res",
   ],
   "243_Luz - Thirza Smith - All Together Now": [
     "243_Luz-ThirzaSmith-AllTogetherNow-01.jpg",
@@ -130,7 +128,8 @@ const exhibitionImages: Record<string, string[]> = {
     "243_Luz-AugustBoch-EliaMunoz-APerfectVacuum-40.jpg",
   ],
   "Ben Gomes Outisde": [
-    "Untitled document.pdf",
+    "page-1.jpg",
+    "page-2.jpg",
   ],
   "I.W. Payne  Lie down I think I love you": [
     "DSCF9120.jpg",
@@ -228,7 +227,6 @@ const exhibitionImages: Record<string, string[]> = {
     "DSCF8004.jpg",
     "DSCF8008.jpg",
     "DSCF8009.jpg",
-    "Lhl desire text.pdf",
   ],
   "Marlie Mul Opening up": [
     "243_Luz-MarlieMul-OpeningUp-01.jpg",
@@ -293,7 +291,6 @@ const exhibitionImages: Record<string, string[]> = {
     "179_JD 243 LUZ_Nov 29 2025__ 2880px no lossless_M8R8S Studio.jpg",
     "183_JD 243 LUZ_Nov 29 2025_ 1_ 2880px no lossless_M8R8S Studio.jpg",
     "212_JD 243 LUZ_Nov 29 2025__ 2880px no lossless_M8R8S Studio.jpg",
-    "Misty the Fox",
     "Screenshot 2025-12-09 at 10.53.24.png",
   ],
   "Nasir Mazhar": [
