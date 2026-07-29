@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+  <div class="home">
+    <div class="home-contact">
+      <p class="home-label">Opening Hours</p>
+      <p class="home-text">Wednesday – Saturday, 1 – 6 pm</p>
+
+      <p class="home-address">
+        First Floor, 1–7 Woburn Walk<br />
+        London, WC1H 0JJ
+      </p>
+
+      <p class="home-email">
+        <a href="mailto:info@243luz.com">info@243luz.com</a>
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .home {
+    display: flex;
+    align-items: flex-end;
+    min-height: calc(100svh - 9rem);
+    max-width: 480px;
+    padding-bottom: 3rem;
+  }
+  .home-contact {
+    line-height: 1.3;
+  }
+  .home-label {
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+  }
+  .home-text {
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+  }
+  .home-address {
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    font-style: normal;
+    margin-bottom: 1.25rem;
+  }
+  .home-email a {
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    text-decoration: none;
+  }
+</style>

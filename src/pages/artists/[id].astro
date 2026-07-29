@@ -1,0 +1,176 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getArtists, getArtistById, getArtistExhibitions } from "../../data";
+import exhibitionImages from "../../data/exhibitionImages";
+import ImageViewer from "../../components/ImageViewer.astro";
+
+export function getStaticPaths() {
+  const artists = getArtists();
+  return artists.map((a) => ({ params: { id: a.id } }));
+}
+
+const { id } = Astro.params;
+const artist = getArtistById(id!);
+
+if (!artist) {
+  return Astro.redirect("/artists");
+}
+
+const exhibitions = getArtistExhibitions(artist.id);
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+---
+
+<BaseLayout>
+  <div class="artist-detail">
+    <header class="artist-header">
+      <h1>{artist.name}</h1>
+      {artist.biography && (
+        <p class="artist-bio">{artist.biography}</p>
+      )}
+    </header>
+
+    {
+      exhibitions.length > 0 && (
+        <section class="artist-exhibitions">
+          <h2 class="section-heading">Exhibitions</h2>
+          <ul class="exhibition-list">
+            {exhibitions.map((exhibition) => (
+              <li>
+                <a href={`/exhibitions/${exhibition.id}`} class="exhibition-link">
+                  <span class="exhibition-name">{exhibition.title}</span>
+                  <span class="exhibition-dates">
+                    {formatDate(exhibition.startDate)} — {formatDate(exhibition.endDate)}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      exhibitions.map((exhibition) => {
+        const images = exhibitionImages[exhibition.folder] || [];
+        if (images.length === 0) return null;
+        const imagePaths = images.map((img) => `/media/${exhibition.folder}/${img}`);
+        return (
+          <section class="artist-works">
+            <h2 class="section-heading">Works — {exhibition.title}</h2>
+            <ImageViewer images={imagePaths}>
+              <div class="works-grid">
+                {imagePaths.map((src) => (
+                  <figure class="work-figure">
+                    <img src={src} alt="" loading="lazy" />
+                  </figure>
+                ))}
+              </div>
+            </ImageViewer>
+          </section>
+        );
+      })
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .artist-detail {
+  }
+
+  .artist-header {
+    margin-bottom: 3rem;
+  }
+
+  .artist-header h1 {
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+
+  .artist-bio {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.6;
+    max-width: 620px;
+  }
+
+  .section-heading {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #aaa;
+    font-style: italic;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .artist-exhibitions {
+    margin-bottom: 3rem;
+  }
+
+  .exhibition-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .exhibition-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    text-decoration: none;
+    color: #1a1a1a;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .exhibition-name {
+    font-size: 1rem;
+  }
+
+  .exhibition-dates {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.7rem;
+    color: #aaa;
+    white-space: nowrap;
+    margin-left: 1.5rem;
+  }
+
+  .artist-works {
+    margin-bottom: 3rem;
+  }
+
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .work-figure {
+    margin: 0;
+    line-height: 0;
+  }
+
+  .work-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #f8f8f8;
+  }
+
+  @media (max-width: 640px) {
+    .exhibition-link {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .exhibition-dates {
+      margin-left: 0;
+    }
+  }
+</style>

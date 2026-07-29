@@ -1,0 +1,163 @@
+<div class="image-viewer-scope" data-images={JSON.stringify(Astro.props.images)}>
+  <slot />
+</div>
+
+<script>
+  (function () {
+    const scopes = document.querySelectorAll(".image-viewer-scope");
+    if (scopes.length === 0) return;
+
+    // Ensure viewer overlay exists only once
+    let viewer = document.getElementById("image-viewer-overlay");
+    if (!viewer) {
+      viewer = document.createElement("div");
+      viewer.id = "image-viewer-overlay";
+      viewer.className = "ivo";
+      viewer.innerHTML = `
+        <button class="ivo-close" aria-label="Close">×</button>
+        <button class="ivo-nav ivo-prev" aria-label="Previous">‹</button>
+        <button class="ivo-nav ivo-next" aria-label="Next">›</button>
+        <div class="ivo-stage">
+          <img class="ivo-img" src="" alt="" />
+        </div>
+      `;
+      document.body.appendChild(viewer);
+
+      const style = document.createElement("style");
+      style.textContent = `
+        .ivo {
+          position: fixed; inset: 0; z-index: 999; background: #fff;
+          display: flex; align-items: center; justify-content: center;
+          opacity: 0; transition: opacity 0.2s; cursor: pointer;
+          pointer-events: none;
+        }
+        .ivo.open { opacity: 1; pointer-events: auto; }
+        .ivo-stage {
+          display: flex; align-items: center; justify-content: center;
+          width: 100%; height: 100%; padding: 3rem; cursor: default;
+        }
+        .ivo-img {
+          max-width: 90%; max-height: 90%; width: auto; height: auto;
+          object-fit: contain; transition: opacity 0.15s, transform 0.2s;
+          transform: scale(0.98);
+        }
+        .ivo.open .ivo-img { transform: scale(1); }
+        .ivo-close {
+          position: fixed; top: 1.25rem; right: 1.5rem; z-index: 1001;
+          background: none; border: none; font-size: 1.6rem; color: #999;
+          cursor: pointer; line-height: 1; padding: 0.25rem;
+          font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+          transition: color 0.15s;
+        }
+        .ivo-close:hover { color: #333; }
+        .ivo-nav {
+          position: fixed; top: 50%; transform: translateY(-50%); z-index: 1001;
+          background: none; border: none; font-size: 2.4rem; color: #ccc;
+          cursor: pointer; padding: 1rem; font-family: Georgia,serif;
+          transition: color 0.15s; line-height: 1;
+        }
+        .ivo-nav:hover { color: #666; }
+        .ivo-prev { left: 0.5rem; }
+        .ivo-next { right: 0.5rem; }
+        .ivo.single .ivo-nav { display: none; }
+        @media (max-width: 640px) {
+          .ivo-stage { padding: 1rem; }
+          .ivo-img { max-width: 96%; max-height: 90%; }
+          .ivo-close { top: 0.75rem; right: 0.75rem; font-size: 1.4rem; }
+          .ivo-nav { font-size: 1.8rem; padding: 0.75rem; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const img = viewer.querySelector(".ivo-img") as HTMLImageElement;
+    const closeBtn = viewer.querySelector(".ivo-close")!;
+    const prevBtn = viewer.querySelector(".ivo-prev")!;
+    const nextBtn = viewer.querySelector(".ivo-next")!;
+    const stage = viewer.querySelector(".ivo-stage")!;
+
+    let currentImages: string[] = [];
+    let currentIndex = 0;
+    let scrollY = 0;
+    const preloaded = new Set<number>();
+
+    function preload(index: number) {
+      if (index < 0 || index >= currentImages.length || preloaded.has(index)) return;
+      preloaded.add(index);
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = currentImages[index];
+      document.head.appendChild(link);
+    }
+
+    function show(images: string[], index: number) {
+      currentImages = images;
+      currentIndex = index;
+      scrollY = window.scrollY;
+      document.body.style.overflow = "hidden";
+      img.style.opacity = "0";
+      img.style.transform = "scale(0.98)";
+      img.src = images[index];
+      viewer.classList.add("open");
+      if (images.length <= 1) {
+        viewer.classList.add("single");
+      } else {
+        viewer.classList.remove("single");
+      }
+      img.onload = () => {
+        requestAnimationFrame(() => {
+          img.style.opacity = "1";
+          img.style.transform = "scale(1)";
+        });
+      };
+      preload(index - 1);
+      preload(index + 1);
+    }
+
+    function hide() {
+      document.body.style.overflow = "";
+      window.scrollTo(0, scrollY);
+      viewer.classList.remove("open");
+    }
+
+    function goNext() {
+      if (currentIndex < currentImages.length - 1) {
+        show(currentImages, currentIndex + 1);
+      }
+    }
+
+    function goPrev() {
+      if (currentIndex > 0) {
+        show(currentImages, currentIndex - 1);
+      }
+    }
+
+    closeBtn.addEventListener("click", (e) => { e.stopPropagation(); hide(); });
+    viewer.addEventListener("click", (e) => { if (e.target === viewer) hide(); });
+    stage.addEventListener("click", (e) => e.stopPropagation());
+    nextBtn.addEventListener("click", (e) => { e.stopPropagation(); goNext(); });
+    prevBtn.addEventListener("click", (e) => { e.stopPropagation(); goPrev(); });
+
+    document.addEventListener("keydown", (e) => {
+      if (!viewer.classList.contains("open")) return;
+      if (e.key === "Escape") hide();
+      else if (e.key === "ArrowRight") goNext();
+      else if (e.key === "ArrowLeft") goPrev();
+    });
+
+    // Bind click handlers to images in each scope
+    scopes.forEach((scope) => {
+      const scopeImages = JSON.parse(scope.getAttribute("data-images") || "[]") as string[];
+      if (scopeImages.length === 0) return;
+
+      scope.querySelectorAll("img").forEach((el, i) => {
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          show(scopeImages, i);
+        });
+        (el as HTMLElement).style.cursor = "pointer";
+      });
+    });
+  })();
+</script>

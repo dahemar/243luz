@@ -1,0 +1,150 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getExhibitions, getExhibitionById } from "../../data";
+import exhibitionImages from "../../data/exhibitionImages";
+import ImageViewer from "../../components/ImageViewer.astro";
+
+export function getStaticPaths() {
+  const exhibitions = getExhibitions();
+  return exhibitions.map((e) => ({ params: { id: e.id } }));
+}
+
+const { id } = Astro.params;
+const exhibition = getExhibitionById(id!);
+const allExhibitions = getExhibitions().sort(
+  (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+);
+
+if (!exhibition) {
+  return Astro.redirect("/exhibitions");
+}
+
+const images: string[] = exhibitionImages[exhibition.folder] || [];
+const imagePaths = images.map((img) => `/media/${exhibition.folder}/${img}`);
+
+const currentIndex = allExhibitions.findIndex((e) => e.id === id);
+const prevExhibition = currentIndex < allExhibitions.length - 1 ? allExhibitions[currentIndex + 1] : null;
+const nextExhibition = currentIndex > 0 ? allExhibitions[currentIndex - 1] : null;
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+---
+
+<BaseLayout>
+  <div class="exhibition-detail">
+    <header class="exhibition-header">
+      <h1>{exhibition.title}</h1>
+      <p class="exhibition-dates">
+        {formatDate(exhibition.startDate)} — {formatDate(exhibition.endDate)}
+      </p>
+      {exhibition.description && (
+        <p class="exhibition-desc">{exhibition.description}</p>
+      )}
+    </header>
+
+    {
+      imagePaths.length > 0 ? (
+        <ImageViewer images={imagePaths}>
+          <div class="exhibition-images">
+            {imagePaths.map((src) => (
+              <figure class="image-figure">
+                <img src={src} alt="" loading="lazy" />
+              </figure>
+            ))}
+          </div>
+        </ImageViewer>
+      ) : (
+        <p class="no-images">No images available.</p>
+      )
+    }
+
+    <nav class="exhibition-nav">
+      {prevExhibition ? (
+        <a href={`/exhibitions/${prevExhibition.id}`} class="nav-prev">
+          ← {prevExhibition.title}
+        </a>
+      ) : <span />}
+      {nextExhibition ? (
+        <a href={`/exhibitions/${nextExhibition.id}`} class="nav-next">
+          {nextExhibition.title} →
+        </a>
+      ) : <span />}
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .exhibition-detail {
+  }
+
+  .exhibition-header {
+    margin-bottom: 3rem;
+  }
+
+  .exhibition-header h1 {
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+
+  .exhibition-dates {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.8rem;
+    color: #999;
+    margin-bottom: 1rem;
+  }
+
+  .exhibition-desc {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  .exhibition-images {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .image-figure {
+    margin: 0;
+    line-height: 0;
+  }
+
+  .image-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #f8f8f8;
+  }
+
+  .no-images {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.8rem;
+    color: #999;
+  }
+
+  .exhibition-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    padding-top: 2rem;
+  }
+
+  .exhibition-nav a {
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: opacity 0.2s;
+  }
+  .exhibition-nav a:hover {
+    opacity: 0.5;
+  }
+
+  .exhibition-nav a:hover {
+    color: #1a1a1a;
+  }
+</style>

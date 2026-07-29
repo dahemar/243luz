@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getArtists, getArtistExhibitions } from "../../data";
+import type { Artist } from "../../data/artists";
+
+const artists: Artist[] = getArtists();
+---
+
+<BaseLayout>
+  <div class="page-header">
+    <h1>Artists</h1>
+  </div>
+
+  <div class="artists-table-wrap">
+    <table class="artists-table">
+      <tbody>
+        {artists.map((artist) => {
+          const exhibitions = getArtistExhibitions(artist.id);
+          return (
+            <tr>
+              <td class="col-name">{artist.name}</td>
+              <td class="col-exhibitions">
+                {exhibitions.map((ex, i) => (
+                  <>
+                    <a href={`/exhibitions/${ex.id}`}>{ex.title}</a>
+                    {i < exhibitions.length - 1 && ", "}
+                  </>
+                ))}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</BaseLayout>
+
+<style>
+  .artists-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .artists-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .artists-table th,
+  .artists-table td {
+    padding: 0.65rem 0;
+    text-align: left;
+    vertical-align: baseline;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .col-name {
+    width: 55%;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    padding-right: 2rem;
+  }
+
+  .col-exhibitions {
+    font-size: 0.8rem;
+    color: #666;
+    font-style: italic;
+  }
+
+  .col-exhibitions a {
+    text-decoration: none;
+    color: #666;
+    font-style: normal;
+  }
+
+  .col-exhibitions a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .artists-table th,
+    .artists-table td {
+      padding: 0.5rem 0;
+    }
+    .col-name {
+      font-size: 0.85rem;
+      padding-right: 1rem;
+    }
+    .col-exhibitions {
+      font-size: 0.72rem;
+    }
+  }
+</style>
