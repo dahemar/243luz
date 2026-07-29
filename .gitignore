@@ -3,6 +3,4 @@ dist/
 .DS_Store
 *.log
 .astro/
-.DS_Store
-*.log
-public/media/
+public/

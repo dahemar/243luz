@@ -132,7 +132,7 @@ const exhibitions: Exhibition[] = [
     startDate: "2025-04-15",
     endDate: "2025-05-30",
     description: "August Boch & Elia Munoz",
-    featuredImage: "/media/August Boch _ Elia Munoz - A Perfect Vacuum/243_Luz-AugustBoch&EliaMunoz-APerfectVacuum-01.jpg",
+    featuredImage: "/media/August Boch _ Elia Munoz - A Perfect Vacuum/243_Luz-AugustBoch_EliaMunoz-APerfectVacuum-01.jpg",
     folder: "August Boch _ Elia Munoz - A Perfect Vacuum",
   },
   {

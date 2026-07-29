@@ -18,7 +18,7 @@ const artists: Artist[] = getArtists();
           const exhibitions = getArtistExhibitions(artist.id);
           return (
             <tr>
-              <td class="col-name">{artist.name}</td>
+              <td class="col-name"><a href={`/artists/${artist.id}`}>{artist.name}</a></td>
               <td class="col-exhibitions">
                 {exhibitions.map((ex, i) => (
                   <>
@@ -60,6 +60,15 @@ const artists: Artist[] = getArtists();
     font-size: 0.95rem;
     color: #1a1a1a;
     padding-right: 2rem;
+  }
+
+  .col-name a {
+    text-decoration: none;
+    color: #1a1a1a;
+  }
+
+  .col-name a:hover {
+    text-decoration: underline;
   }
 
   .col-exhibitions {
