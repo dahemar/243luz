@@ -192,7 +192,7 @@ const exhibitions: Exhibition[] = [
     startDate: "2026-01-15",
     endDate: "2026-02-28",
     description: "",
-    featuredImage: "/media/Prossecco Wisdom/Prosecco Wisdom Still 2.jpg",
+    featuredImage: "/media/Prossecco Wisdom/DSCF5322.jpg",
     folder: "Prossecco Wisdom",
   },
 ];

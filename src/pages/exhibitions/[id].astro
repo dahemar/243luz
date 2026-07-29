@@ -38,7 +38,10 @@ function formatDate(dateStr: string): string {
       <a href="/exhibitions" class="back-link">← Exhibitions</a>
       <div class="title-row">
         <h1>{exhibition.title}</h1>
-        <button id="view-toggle" class="view-toggle" aria-label="Toggle view">switch view</button>
+        <button id="view-toggle" class="view-toggle" aria-label="Toggle view">
+          <span class="icon-stack">☰</span>
+          <span class="icon-grid">⊞</span>
+        </button>
       </div>
       <p class="exhibition-dates">
         {formatDate(exhibition.startDate)} — {formatDate(exhibition.endDate)}
@@ -132,21 +135,26 @@ function formatDate(dateStr: string): string {
   }
 
   .view-toggle {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 0.65rem;
-    color: #aaa;
     background: none;
     border: none;
     cursor: pointer;
-    text-transform: lowercase;
+    font-size: 1.05rem;
+    color: #aaa;
     transition: color 0.2s;
     white-space: nowrap;
     margin-left: 1rem;
+    padding: 0;
+    line-height: 1;
   }
 
   .view-toggle:hover {
     color: #1a1a1a;
   }
+
+  .icon-stack,
+  .icon-grid { display: none; }
+  .is-stack .icon-grid { display: inline; }
+  .is-grid  .icon-stack { display: inline; }
 
   /* Stack view */
   .view-stack {
@@ -188,8 +196,8 @@ function formatDate(dateStr: string): string {
   .exhibition-nav {
     display: flex;
     justify-content: space-between;
-    margin-top: 3rem;
-    padding-top: 2rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
   }
 
   .exhibition-nav a {
@@ -207,12 +215,23 @@ function formatDate(dateStr: string): string {
   const container = document.getElementById("images-container");
   const toggle = document.getElementById("view-toggle");
   if (container && toggle) {
+    function update() {
+      if (container.classList.contains("view-grid")) {
+        toggle.classList.add("is-grid");
+        toggle.classList.remove("is-stack");
+      } else {
+        toggle.classList.add("is-stack");
+        toggle.classList.remove("is-grid");
+      }
+    }
+    update();
     toggle.addEventListener("click", () => {
       if (container.classList.contains("view-grid")) {
         container.classList.replace("view-grid", "view-stack");
       } else {
         container.classList.replace("view-stack", "view-grid");
       }
+      update();
     });
   }
 </script>
