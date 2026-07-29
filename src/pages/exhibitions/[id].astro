@@ -68,14 +68,14 @@ function formatDate(dateStr: string): string {
     }
 
     <nav class="exhibition-nav">
-      {prevExhibition ? (
-        <a href={`/exhibitions/${prevExhibition.id}`} class="nav-prev">
-          ← {prevExhibition.title}
+      {nextExhibition ? (
+        <a href={`/exhibitions/${nextExhibition.id}`} class="nav-prev">
+          ← {nextExhibition.title}
         </a>
       ) : <span />}
-      {nextExhibition ? (
-        <a href={`/exhibitions/${nextExhibition.id}`} class="nav-next">
-          {nextExhibition.title} →
+      {prevExhibition ? (
+        <a href={`/exhibitions/${prevExhibition.id}`} class="nav-next">
+          {prevExhibition.title} →
         </a>
       ) : <span />}
     </nav>

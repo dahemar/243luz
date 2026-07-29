@@ -28,7 +28,10 @@ function formatDate(dateStr: string): string {
       <a href="/artists" class="back-link">← Artists</a>
       <h1>{artist.name}</h1>
       {artist.biography && (
-        <p class="artist-bio">{artist.biography}</p>
+        <div class="artist-bio" set:html={artist.biography
+          .split("\n\n")
+          .map(p => `<p>${p.replace(/\n/g, "<br/>")}</p>`)
+          .join("")} />
       )}
     </header>
 
@@ -89,6 +92,10 @@ function formatDate(dateStr: string): string {
     color: #444;
     line-height: 1.6;
     max-width: 620px;
+  }
+
+  .artist-bio :global(p) {
+    margin-bottom: 1rem;
   }
 
   .section-heading {
