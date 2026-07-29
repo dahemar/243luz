@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "fetch-media": "python3 scripts/fetch-media.py",
+    "build": "npm run fetch-media && astro build",
     "preview": "astro preview"
   },
   "dependencies": {
