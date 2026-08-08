@@ -158,10 +158,10 @@ const exhibitions: Exhibition[] = [
   {
     id: "sunset-beach",
     title: "Sunset Beach",
-    artistIds: [],
+    artistIds: ["salomon-garcon"],
     startDate: "2025-09-15",
     endDate: "2025-10-30",
-    description: "",
+    description: "Solomon Garçon",
     featuredImage: "/media/sunset beach/_DSC0198.jpg",
     folder: "sunset beach",
   },

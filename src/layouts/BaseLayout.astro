@@ -1,4 +1,7 @@
 ---
+const currentPath = Astro.url.pathname;
+const isExhibitions = currentPath.startsWith("/exhibitions");
+const isArtists = currentPath.startsWith("/artists");
 ---
 
 <!doctype html>
@@ -21,8 +24,8 @@
           <img src="/media/243 Lux - Co logo.jpg" alt="243 Luz" class="logo-img" />
         </a>
         <div class="nav-links">
-          <a href="/exhibitions">Exhibitions</a>
-          <a href="/artists">Artists</a>
+          <a href="/exhibitions" aria-current={isExhibitions ? "page" : undefined} class:list={[{ active: isExhibitions }]}>Exhibitions</a>
+          <a href="/artists" aria-current={isArtists ? "page" : undefined} class:list={[{ active: isArtists }]}>Artists</a>
         </div>
       </nav>
     </header>
@@ -47,6 +50,17 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  ::selection {
+    background: #1a1a1a;
+    color: #fff;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 1px solid #1a1a1a;
+    outline-offset: 2px;
+  }
+
   body {
     font-family: "EB Garamond", Georgia, "Times New Roman", serif;
     color: #1a1a1a;
@@ -55,6 +69,24 @@
     max-width: 1080px;
     margin: 0 auto;
     padding: 0 0.75rem 6rem;
+  }
+
+  main {
+    animation: fadein 0.4s ease;
+  }
+
+  @keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    main {
+      animation: none;
+    }
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+    }
   }
 
   .site-header {
@@ -100,6 +132,10 @@
 
   .nav-links a:hover {
     opacity: 0.5;
+  }
+
+  .nav-links a.active {
+    border-bottom: 1px solid #1a1a1a;
   }
 
   .page-header {

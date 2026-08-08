@@ -36,13 +36,7 @@ function formatDate(dateStr: string): string {
   <div class="exhibition-detail">
     <header class="exhibition-header">
       <a href="/exhibitions" class="back-link">← Exhibitions</a>
-      <div class="title-row">
-        <h1>{exhibition.title}</h1>
-        <button id="view-toggle" class="view-toggle" aria-label="Toggle view">
-          <span class="icon-stack">☰</span>
-          <span class="icon-grid">⊞</span>
-        </button>
-      </div>
+      <h1>{exhibition.title}</h1>
       <p class="exhibition-dates">
         {formatDate(exhibition.startDate)} — {formatDate(exhibition.endDate)}
       </p>
@@ -53,15 +47,15 @@ function formatDate(dateStr: string): string {
 
     {
       imagePaths.length > 0 ? (
-          <ImageViewer images={imagePaths}>
-            <div id="images-container" class="exhibition-images view-stack">
-              {imagePaths.map((src) => (
-                <figure class="image-figure">
-                  <img src={src} alt="" loading="lazy" />
-                </figure>
-              ))}
-            </div>
-          </ImageViewer>
+        <ImageViewer images={imagePaths}>
+          <div class="exhibition-images">
+            {imagePaths.map((src) => (
+              <figure class="image-figure">
+                <img src={src} alt="" loading="lazy" />
+              </figure>
+            ))}
+          </div>
+        </ImageViewer>
       ) : (
         <p class="no-images">No images available.</p>
       )
@@ -83,9 +77,6 @@ function formatDate(dateStr: string): string {
 </BaseLayout>
 
 <style>
-  .exhibition-detail {
-  }
-
   .exhibition-header {
     margin-bottom: 3rem;
   }
@@ -110,16 +101,6 @@ function formatDate(dateStr: string): string {
     margin-bottom: 0.5rem;
   }
 
-  .title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-  }
-
-  .title-row h1 {
-    margin-bottom: 0;
-  }
-
   .exhibition-dates {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 0.8rem;
@@ -134,42 +115,7 @@ function formatDate(dateStr: string): string {
     max-width: 600px;
   }
 
-  .view-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.05rem;
-    color: #aaa;
-    transition: color 0.2s;
-    white-space: nowrap;
-    margin-left: 1rem;
-    padding: 0;
-    line-height: 1;
-  }
-
-  .view-toggle:hover {
-    color: #1a1a1a;
-  }
-
-  .icon-stack,
-  .icon-grid { display: none; }
-  .is-stack .icon-grid { display: inline; }
-  .is-grid  .icon-stack { display: inline; }
-
-  /* Stack view */
-  .view-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .view-stack .image-figure img {
-    width: 100%;
-    height: auto;
-  }
-
-  /* Grid view */
-  .view-grid {
+  .exhibition-images {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 1.5rem;
@@ -196,8 +142,8 @@ function formatDate(dateStr: string): string {
   .exhibition-nav {
     display: flex;
     justify-content: space-between;
-    margin-top: 1.5rem;
-    padding-top: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
   }
 
   .exhibition-nav a {
@@ -209,29 +155,11 @@ function formatDate(dateStr: string): string {
   .exhibition-nav a:hover {
     opacity: 0.5;
   }
-</style>
 
-<script>
-  const container = document.getElementById("images-container");
-  const toggle = document.getElementById("view-toggle");
-  if (container && toggle) {
-    function update() {
-      if (container.classList.contains("view-grid")) {
-        toggle.classList.add("is-grid");
-        toggle.classList.remove("is-stack");
-      } else {
-        toggle.classList.add("is-stack");
-        toggle.classList.remove("is-grid");
-      }
+  @media (max-width: 640px) {
+    .exhibition-images {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
-    update();
-    toggle.addEventListener("click", () => {
-      if (container.classList.contains("view-grid")) {
-        container.classList.replace("view-grid", "view-stack");
-      } else {
-        container.classList.replace("view-stack", "view-grid");
-      }
-      update();
-    });
   }
-</script>
+</style>
