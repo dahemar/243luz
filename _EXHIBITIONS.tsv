@@ -1,19 +1,19 @@
-id	title	start_date	end_date	description	wix_folder_name	show	order
-jack-otway-richard-tinkler	Jack Otway & Richard Tinkler	2023-06-17	2023-07-22		Jack Otway _ Richard Tinkler	y	0
-lynn-hershman-leeson	Lynn Hershman Leeson	2023-09-01	2023-10-15		Lynn Hershman Leeson	y	1
-thing-theory	Thing Theory	2023-11-01	2023-12-15		Thing Theory	y	2
-screens	Screens	2024-01-15	2024-02-28		Screens	y	3
-adam-patrick-grant-mourning-dance	Mourning Dance	2024-03-01	2024-04-15	Adam Patrick Grant	Adam Patrick Grant	y	4
-racheal-crowther-managed-decline	Managed Decline	2024-04-20	2024-05-30	Racheal Crowther	Racheal Crowther Managed Decline	y	5
-kevin-lowenthal-honeymoon	Honeymoon	2024-06-01	2024-07-15	Kevin Lowenthal	Kevin Lowenthal Honeymoon	y	6
-thirza-smith-all-together-now	All Together Now	2024-07-20	2024-09-01	Thirza Smith	243_Luz - Thirza Smith - All Together Now	y	7
-iw-payne-lie-down	Lie Down I Think I Love You	2024-09-15	2024-10-30	I.W. Payne	I.W. Payne  Lie down I think I love you	y	8
-shola-von-reinhold-rebis	REBIS	2025-01-01	2025-02-15	Shola Von Reinhold	Shola Von Reinhold	y	9
-marlie-mul-opening-up	Opening Up	2025-02-20	2025-04-01	Marlie Mul	Marlie Mul Opening up	y	10
-august-boch-elia-munoz-perfect-vacuum	A Perfect Vacuum	2025-04-15	2025-05-30	August Boch & Elia Munoz	August Boch - Elia Munoz - A Perfect Vacuum	y	11
-nasir-mazhar-i-always-wanted	I Always Wanted To Show You	2025-06-01	2025-07-15	Nasir Mazhar	Nasir Mazhar	y	12
-aidan-duffy-after-the-function	After the Function	2025-07-20	2025-09-01	Aidan Duffy	Aidan Duffy After the Function	y	13
-sunset-beach	Sunset Beach	2025-09-15	2025-10-30	Solomon Garçon	sunset beach	y	14
-ben-gomes-outside	Outside	2025-11-01	2025-11-30	Ben Gomes	Ben Gomes Outisde	y	15
-misty-the-fox	Misty The Fox	2025-12-01	2025-12-20		Misty The Fox	y	16
-prossecco-wisdom	Prossecco Wisdom	2026-01-15	2026-02-28		Prossecco Wisdom	y	17
+id	title	start_date	end_date	description	wix_folder_name	order
+jack-otway-richard-tinkler	Jack Otway & Richard Tinkler	17 June 2023	22 July 2023		Jack Otway _ Richard Tinkler,  June 17th – July 22nd 2023	0
+lynn-hershman-leeson	Lynn Hershman Leeson	1 September 2023	15 October 2023		Lynn Hershman Leeson	1
+thing-theory	Thing Theory	1 November 2023	15 December 2023		Thing Theory	2
+screens	Screens	15 January 2024	28 February 2024		Screens	3
+adam-patrick-grant-mourning-dance	Mourning Dance	1 March 2024	15 April 2024	Adam Patrick Grant	Adam Patrick Grant	4
+racheal-crowther-managed-decline	Managed Decline	20 April 2024	30 May 2024	Racheal Crowther	Racheal Crowther Managed Decline	5
+kevin-lowenthal-honeymoon	Honeymoon	1 June 2024	15 July 2024	Kevin Lowenthal	Kevin Lowenthal Honeymoon	6
+thirza-smith-all-together-now	All Together Now	20 July 2024	1 September 2024	Thirza Smith	243_Luz - Thirza Smith - All Together Now	7
+iw-payne-lie-down	Lie Down I Think I Love You	15 September 2024	30 October 2024	I.W. Payne	I.W. Payne  Lie down I think I love you	8
+shola-von-reinhold-rebis	REBIS	1 January 2025	15 February 2025	Shola Von Reinhold	Shola Von Reinhold	9
+marlie-mul-opening-up	Opening Up	20 February 2025	1 April 2025	Marlie Mul	Marlie Mul Opening up	10
+august-boch-elia-munoz-perfect-vacuum	A Perfect Vacuum	15 April 2025	30 May 2025	August Boch & Elia Munoz	August Boch - Elia Munoz - A Perfect Vacuum	11
+nasir-mazhar-i-always-wanted	I Always Wanted To Show You	1 June 2025	15 July 2025	Nasir Mazhar	Nasir Mazhar	12
+aidan-duffy-after-the-function	After the Function	20 July 2025	1 September 2025	Aidan Duffy	Aidan Duffy After the Function	13
+sunset-beach	Sunset Beach	15 September 2025	30 October 2025	Solomon Garçon	sunset beach	14
+ben-gomes-outside	Outside	1 November 2025	30 November 2025	Ben Gomes	Ben Gomes Outisde	15
+misty-the-fox	Misty The Fox	1 December 2025	20 December 2025		Misty The Fox	16
+prossecco-wisdom	Prossecco Wisdom	15 January 2026	28 February 2026		Prossecco Wisdom	17
