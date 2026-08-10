@@ -27,8 +27,7 @@ const prevExhibition = currentIndex < allExhibitions.length - 1 ? allExhibitions
 const nextExhibition = currentIndex > 0 ? allExhibitions[currentIndex - 1] : null;
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  return dateStr;
 }
 ---
 

@@ -11,8 +11,7 @@ const galleryArtists = getArtists();
 const artistIds = new Set(galleryArtists.map((a) => a.id));
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  return dateStr;
 }
 ---
 

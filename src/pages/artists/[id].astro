@@ -6,7 +6,9 @@ import artistImagesData from "../../data/artistImages.ts";
 
 export function getStaticPaths() {
   const artists = getArtists();
-  return artists.map((a) => ({ params: { id: a.id } }));
+  return artists
+    .filter(a => a.biography || getArtistExhibitions(a.id).length > 0)
+    .map((a) => ({ params: { id: a.id } }));
 }
 
 const { id } = Astro.params;
@@ -19,15 +21,12 @@ if (!artist) {
 const exhibitions = getArtistExhibitions(artist.id);
 
 // Artist gallery images from Wix folder
-const artistImages: string[] = artist.portrait
-  ? [artist.portrait, ...(artistImagesData[artist.id] || []).map(
-      (img: string) => `/media/${artist.wixFolder}/${img}`
-    )]
-  : [];
+const artistImages: string[] = (artistImagesData[artist.id] || []).map(
+  (img: string) => `/media/${artist.wixFolder}/${img}`
+);
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  return dateStr;
 }
 ---
 
@@ -36,20 +35,20 @@ function formatDate(dateStr: string): string {
     <header class="artist-header">
       <a href="/artists" class="back-link">← Artists</a>
       <div class="artist-top">
-        {artist.portrait && (
-          <img
-            src={artist.portrait}
-            alt={artist.name}
-            class="artist-portrait"
-          />
-        )}
         <div class="artist-info">
           <h1>{artist.name}</h1>
           {artist.biography && (
-            <div class="artist-bio" set:html={artist.biography
-              .split("\n\n")
-              .map(p => `<p>${p.replace(/\n/g, "<br/>")}</p>`)
-              .join("")} />
+            <div class="artist-bio" set:html={
+              (() => {
+                let text = artist.biography;
+                // Convert [img]URL[/img] to <img> (do this before linkifying)
+                text = text.replace(/\[img\]([^\]]+?)\[\/img\]/gi, '<img src="$1" alt="" class="bio-img" loading="lazy" />');
+                // Auto-linkify bare URLs (not already inside <a> or <img> tags)
+                text = text.replace(/(?<!["'>])(https?:\/\/[^\s<>\[\]]+)/gi, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+                // Paragraphs
+                return text.split("\n\n").map(p => `<p>${p.replace(/\n/g, "<br/>")}</p>`).join("");
+              })()
+            } />
           )}
         </div>
       </div>
@@ -119,13 +118,6 @@ function formatDate(dateStr: string): string {
     align-items: flex-start;
   }
 
-  .artist-portrait {
-    width: 220px;
-    height: auto;
-    flex-shrink: 0;
-    background: #f8f8f8;
-  }
-
   .artist-info h1 {
     font-size: 1.6rem;
     font-weight: 400;
@@ -141,6 +133,24 @@ function formatDate(dateStr: string): string {
 
   .artist-bio :global(p) {
     margin-bottom: 1rem;
+  }
+
+  .artist-bio :global(.bio-img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+    background: #f8f8f8;
+  }
+
+  .artist-bio :global(a) {
+    color: #1a1a1a;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .artist-bio :global(a:hover) {
+    opacity: 0.6;
   }
 
   .section-heading {
@@ -210,9 +220,6 @@ function formatDate(dateStr: string): string {
     .artist-top {
       flex-direction: column;
       gap: 1.5rem;
-    }
-    .artist-portrait {
-      width: 140px;
     }
     .exhibition-link {
       flex-direction: column;

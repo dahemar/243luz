@@ -16,9 +16,16 @@ const artists: Artist[] = getArtists();
       <tbody>
         {artists.map((artist) => {
           const exhibitions = getArtistExhibitions(artist.id);
+          const hasDetail = artist.biography || exhibitions.length > 0;
           return (
             <tr>
-              <td class="col-name"><a href={`/artists/${artist.id}`}>{artist.name}</a></td>
+              <td class="col-name">
+                {hasDetail ? (
+                  <a href={`/artists/${artist.id}`}>{artist.name}</a>
+                ) : (
+                  artist.name
+                )}
+              </td>
               <td class="col-exhibitions">
                 {exhibitions.map((ex, i) => (
                   <>

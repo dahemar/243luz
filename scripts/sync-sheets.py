@@ -55,7 +55,7 @@ def rows_to_dicts(rows: list[list[str]]) -> list[dict]:
         entry = {}
         for i, h in enumerate(headers):
             entry[h] = row[i].strip() if i < len(row) else ""
-        if entry.get("show", "y") != "y":
+        if "id" in entry and not entry["id"]:
             continue
         result.append(entry)
     return result
@@ -74,10 +74,8 @@ def generate_artists(rows: list[dict], link_rows: list[dict]):
         "export interface Artist {",
         "  id: string;",
         "  name: string;",
-        "  sortName: string;",
         "  biography: string;",
         "  exhibitionIds: string[];",
-        "  portrait?: string;",
         "  wixFolder?: string;",
         "}",
         "",
@@ -85,16 +83,12 @@ def generate_artists(rows: list[dict], link_rows: list[dict]):
     ]
     for r in rows:
         bio = r.get("biography", "").replace("\\n", "\n").replace("\n", "\\n")
-        portrait = r.get("portrait", "")
         wix_folder = r.get("wix_folder", "")
         lines.append(f'  {{')
         lines.append(f'    id: "{r["id"]}",')
         lines.append(f'    name: "{r["name"]}",')
-        lines.append(f'    sortName: "{r.get("sort_name", r["name"])}",')
         lines.append(f'    biography: `{bio}`,')
         lines.append(f'    exhibitionIds: {json.dumps(art_to_exh.get(r["id"], []))},')
-        if portrait:
-            lines.append(f'    portrait: "{portrait}",')
         if wix_folder:
             lines.append(f'    wixFolder: "{sanitize(wix_folder)}",')
         lines.append(f'  }},')
@@ -156,8 +150,8 @@ def generate_exhibitions(exh_rows: list[dict], link_rows: list[dict]):
         lines.append(f'    id: "{r["id"]}",')
         lines.append(f'    title: "{r["title"]}",')
         lines.append(f'    artistIds: {json.dumps(artist_ids)},')
-        lines.append(f'    startDate: "{gsheet_date_to_iso(r["start_date"])}",')
-        lines.append(f'    endDate: "{gsheet_date_to_iso(r["end_date"])}",')
+        lines.append(f'    startDate: "{r["start_date"]}",')
+        lines.append(f'    endDate: "{r["end_date"]}",')
         lines.append(f'    description: "{r.get("description", "")}",')
         lines.append(f'    featuredImage: "{featured}",')
         lines.append(f'    folder: "{fid}",')

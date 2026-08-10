@@ -6,9 +6,7 @@ export function getExhibitions(): Exhibition[] {
 }
 
 export function getArtists(): Artist[] {
-  return [...artistsData].sort((a, b) =>
-    a.sortName.localeCompare(b.sortName)
-  );
+  return artistsData;
 }
 
 export function getArtistById(id: string): Artist | undefined {
