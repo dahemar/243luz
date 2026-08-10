@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import urllib.request
+from datetime import datetime, timedelta
 
 SPREADSHEET_ID = "1I2ab8Lq6vy03UFU7aQ7tCnyddoh8Y06YD_drcH48CzI"
 API_KEY = "AIzaSyBHQgbSv588A3qr-Kzeo6YrZ9TbVNlrSkc"
@@ -18,6 +19,23 @@ DATA_DIR = os.path.join(PROJECT_DIR, "src", "data")
 MEDIA_DIR = os.path.join(PROJECT_DIR, "public", "media")
 
 SHEETS_API = f"https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}/values"
+GOOGLE_SHEETS_EPOCH = datetime(1899, 12, 30)
+
+
+def gsheet_date_to_iso(value: str) -> str:
+    """Convert Google Sheets date serial number to YYYY-MM-DD."""
+    try:
+        serial = int(value)
+        if serial < 3000 or serial > 100000:
+            return value
+        dt = GOOGLE_SHEETS_EPOCH + timedelta(days=serial)
+        return dt.strftime("%Y-%m-%d")
+    except (ValueError, OverflowError):
+        return value
+
+
+def sanitize(name: str) -> str:
+    return name.replace("&", "-")
 
 
 def fetch_sheet(sheet_name: str) -> list[list[str]]:
@@ -59,18 +77,26 @@ def generate_artists(rows: list[dict], link_rows: list[dict]):
         "  sortName: string;",
         "  biography: string;",
         "  exhibitionIds: string[];",
+        "  portrait?: string;",
+        "  wixFolder?: string;",
         "}",
         "",
         "const artists: Artist[] = [",
     ]
     for r in rows:
         bio = r.get("biography", "").replace("\\n", "\n").replace("\n", "\\n")
+        portrait = r.get("portrait", "")
+        wix_folder = r.get("wix_folder", "")
         lines.append(f'  {{')
         lines.append(f'    id: "{r["id"]}",')
         lines.append(f'    name: "{r["name"]}",')
         lines.append(f'    sortName: "{r.get("sort_name", r["name"])}",')
         lines.append(f'    biography: `{bio}`,')
         lines.append(f'    exhibitionIds: {json.dumps(art_to_exh.get(r["id"], []))},')
+        if portrait:
+            lines.append(f'    portrait: "{portrait}",')
+        if wix_folder:
+            lines.append(f'    wixFolder: "{sanitize(wix_folder)}",')
         lines.append(f'  }},')
     lines.append("];")
     lines.append("")
@@ -130,8 +156,8 @@ def generate_exhibitions(exh_rows: list[dict], link_rows: list[dict]):
         lines.append(f'    id: "{r["id"]}",')
         lines.append(f'    title: "{r["title"]}",')
         lines.append(f'    artistIds: {json.dumps(artist_ids)},')
-        lines.append(f'    startDate: "{r["start_date"]}",')
-        lines.append(f'    endDate: "{r["end_date"]}",')
+        lines.append(f'    startDate: "{gsheet_date_to_iso(r["start_date"])}",')
+        lines.append(f'    endDate: "{gsheet_date_to_iso(r["end_date"])}",')
         lines.append(f'    description: "{r.get("description", "")}",')
         lines.append(f'    featuredImage: "{featured}",')
         lines.append(f'    folder: "{fid}",')
@@ -250,21 +276,30 @@ def main():
     exh_rows = rows_to_dicts(exhibitions_data)
     print(f"  Exhibitions: {len(exh_rows)}")
 
-    links_data = fetch_sheet("Exhibition_Artists")
+    links_data = fetch_sheet("Exhibitions_Artists")
     link_rows = rows_to_dicts(links_data)
     print(f"  Artist-Exhibition links: {len(link_rows)}")
 
     print("\n[2/4] Downloading Wix media...")
-    folders = [r.get("wix_folder_name", "") for r in exh_rows]
-    folder_images = download_wix_media(folders)
+    exh_folders = [r.get("wix_folder_name", "") for r in exh_rows]
+    art_folders = [r.get("wix_folder", "") for r in art_rows if r.get("wix_folder")]
+    all_folders = list(set(exh_folders + art_folders))
+    all_folders = [f for f in all_folders if f]  # Remove empty
+    folder_images = download_wix_media(all_folders)
+
+    # Generate artist images data
+    artist_images = {}
+    for r in art_rows:
+        folder = sanitize(r.get("wix_folder", ""))
+        if folder and folder in folder_images:
+            artist_images[r["id"]] = folder_images[folder]
 
     print("\n[3/4] Generating TypeScript data files...")
     generate_artists(art_rows, link_rows)
     generate_exhibitions(exh_rows, link_rows)
 
-    print("\n[4/4] Generating exhibitionImages.ts...")
+    print("\n[4/4] Generating image manifests...")
     if not folder_images:
-        # Fallback: scan local media directory
         folder_images = {}
         if os.path.isdir(MEDIA_DIR):
             for item in sorted(os.listdir(MEDIA_DIR)):
@@ -273,6 +308,23 @@ def main():
                     imgs = sorted([f for f in os.listdir(path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".gif"))])
                     folder_images[item] = imgs
     generate_exhibition_images(folder_images)
+
+    # Generate artist images data
+    if artist_images:
+        lines = ["const artistImages: Record<string, string[]> = {"]
+        for aid, imgs in sorted(artist_images.items()):
+            lines.append(f'  "{aid}": [')
+            for img in sorted(imgs):
+                lines.append(f'    "{img.replace(chr(34), chr(92)+chr(34))}",')
+            lines.append("  ],")
+        lines.append("};")
+        lines.append("")
+        lines.append("export default artistImages;")
+        lines.append("")
+        out = os.path.join(DATA_DIR, "artistImages.ts")
+        with open(out, "w") as f:
+            f.write("\n".join(lines))
+        print(f"  → {out} ({len(artist_images)} artists)")
 
     print("\nDone.")
 

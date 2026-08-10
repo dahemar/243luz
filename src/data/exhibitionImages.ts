@@ -448,6 +448,9 @@ const exhibitionImages: Record<string, string[]> = {
     "243_Luz-RachealCrowther-ManagedDecline-43.jpg",
   ],
   "Screens": [
+    "DSCF9024.jpg",
+    "DSCF9025.jpg",
+    "DSCF9026.jpg",
     "DSC_0223.jpg",
     "DSC_0223BIGGERBACKGROUND.jpg",
     "DSC_0237-2.jpg",
@@ -465,9 +468,6 @@ const exhibitionImages: Record<string, string[]> = {
     "DSC_0323NEW-2.jpg",
     "DSC_0384-2.jpg",
     "DSC_0420-2.jpg",
-    "DSCF9024.jpg",
-    "DSCF9025.jpg",
-    "DSCF9026.jpg",
   ],
   "Shola Von Reinhold": [
     "243_Luz-SholaVonReinhold-REBIS-001.jpg",
@@ -561,6 +561,6 @@ const exhibitionImages: Record<string, string[]> = {
     "_DSC0400PAN.jpg",
     "_DSC0437.jpg",
   ],
-}
+};
 
 export default exhibitionImages;

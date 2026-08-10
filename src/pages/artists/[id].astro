@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getArtists, getArtistById, getArtistExhibitions } from "../../data";
+import ImageViewer from "../../components/ImageViewer.astro";
+import artistImagesData from "../../data/artistImages.ts";
 
 export function getStaticPaths() {
   const artists = getArtists();
@@ -16,6 +18,13 @@ if (!artist) {
 
 const exhibitions = getArtistExhibitions(artist.id);
 
+// Artist gallery images from Wix folder
+const artistImages: string[] = artist.portrait
+  ? [artist.portrait, ...(artistImagesData[artist.id] || []).map(
+      (img: string) => `/media/${artist.wixFolder}/${img}`
+    )]
+  : [];
+
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
@@ -26,19 +35,30 @@ function formatDate(dateStr: string): string {
   <div class="artist-detail">
     <header class="artist-header">
       <a href="/artists" class="back-link">← Artists</a>
-      <h1>{artist.name}</h1>
-      {artist.biography && (
-        <div class="artist-bio" set:html={artist.biography
-          .split("\n\n")
-          .map(p => `<p>${p.replace(/\n/g, "<br/>")}</p>`)
-          .join("")} />
-      )}
+      <div class="artist-top">
+        {artist.portrait && (
+          <img
+            src={artist.portrait}
+            alt={artist.name}
+            class="artist-portrait"
+          />
+        )}
+        <div class="artist-info">
+          <h1>{artist.name}</h1>
+          {artist.biography && (
+            <div class="artist-bio" set:html={artist.biography
+              .split("\n\n")
+              .map(p => `<p>${p.replace(/\n/g, "<br/>")}</p>`)
+              .join("")} />
+          )}
+        </div>
+      </div>
     </header>
 
     {
       exhibitions.length > 0 && (
         <section class="artist-exhibitions">
-          <h2 class="section-heading">Exhibitions</h2>
+          <h2 class="section-heading">Exhibitions at 243 Luz</h2>
           <ul class="exhibition-list">
             {exhibitions.map((exhibition) => (
               <li>
@@ -55,14 +75,26 @@ function formatDate(dateStr: string): string {
       )
     }
 
-
+    {
+      artistImages.length > 0 && (
+        <section class="artist-works">
+          <h2 class="section-heading">Selected Works</h2>
+          <ImageViewer images={artistImages}>
+            <div class="works-grid">
+              {artistImages.map((src) => (
+                <figure class="work-figure">
+                  <img src={src} alt="" loading="lazy" />
+                </figure>
+              ))}
+            </div>
+          </ImageViewer>
+        </section>
+      )
+    }
   </div>
 </BaseLayout>
 
 <style>
-  .artist-detail {
-  }
-
   .artist-header {
     margin-bottom: 3rem;
   }
@@ -73,7 +105,7 @@ function formatDate(dateStr: string): string {
     font-size: 0.65rem;
     color: #aaa;
     text-decoration: none;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
     transition: color 0.2s;
   }
 
@@ -81,10 +113,23 @@ function formatDate(dateStr: string): string {
     color: #1a1a1a;
   }
 
-  .artist-header h1 {
+  .artist-top {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+  }
+
+  .artist-portrait {
+    width: 220px;
+    height: auto;
+    flex-shrink: 0;
+    background: #f8f8f8;
+  }
+
+  .artist-info h1 {
     font-size: 1.6rem;
     font-weight: 400;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
   }
 
   .artist-bio {
@@ -139,13 +184,46 @@ function formatDate(dateStr: string): string {
     margin-left: 1.5rem;
   }
 
+  .artist-works {
+    margin-bottom: 3rem;
+  }
+
+  .works-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .work-figure {
+    margin: 0;
+    line-height: 0;
+  }
+
+  .work-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #f8f8f8;
+  }
+
   @media (max-width: 640px) {
+    .artist-top {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .artist-portrait {
+      width: 140px;
+    }
     .exhibition-link {
       flex-direction: column;
       gap: 0.15rem;
     }
     .exhibition-dates {
       margin-left: 0;
+    }
+    .works-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
   }
 </style>
