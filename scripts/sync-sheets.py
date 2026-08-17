@@ -55,7 +55,7 @@ def rows_to_dicts(rows: list[list[str]]) -> list[dict]:
         entry = {}
         for i, h in enumerate(headers):
             entry[h] = row[i].strip() if i < len(row) else ""
-        if entry.get("show", "y") != "y":
+        if "id" in entry and not entry["id"]:
             continue
         result.append(entry)
     return result
