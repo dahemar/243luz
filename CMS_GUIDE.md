@@ -8,7 +8,7 @@ Everything on the website is managed from a single Google Sheet. Changes go live
 
 **Link:** https://docs.google.com/spreadsheets/d/1I2ab8Lq6vy03UFU7aQ7tCnyddoh8Y06YD_drcH48CzI
 
-There are three tabs:
+There are four tabs:
 
 ### 1. Exhibitions tab
 
@@ -53,6 +53,28 @@ Links artists to exhibitions. Each row is one link.
 | artist_id | The `id` from the Artists tab |
 
 Example: `sunset-beach` → `salomon-garcon`
+
+### 4. Editions tab
+
+Editions are limited-edition works available for purchase. Each row is one edition.
+
+| Column | What to put |
+|--------|-------------|
+| id | Short slug, no spaces. e.g. `garcon-jog-mode` |
+| artist_id | The `id` from the Artists tab |
+| title | Title of the edition |
+| year | Year it was made |
+| medium | Print/medium type. e.g. `Archival pigment print` |
+| dimensions | e.g. `29.7 × 42 cm` |
+| edition_size | e.g. `Edition of 25 + 2 AP` |
+| price | e.g. `£450` or `Price on request` |
+| currency | e.g. `GBP` |
+| availability | One of `available`, `sold`, or `enquire` |
+| description | Short description. Can be empty. |
+| image | Path or full URL to the edition image. Can be a Wix static URL. |
+| buy_url | The external checkout link (e.g. a Stripe Payment Link). Only used when availability is `available`. Leave empty to fall back to an enquiry email. |
+
+**How buying works (version A):** editions marked `available` show a **Buy** button that opens `buy_url` in a new tab. Editions marked `sold` show a **Sold** label, and `enquire` shows an **Enquire** button that opens an email to `info@243luz.com`. If `buy_url` is empty, the Buy button falls back to an enquiry email.
 
 ---
 

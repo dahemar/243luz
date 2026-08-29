@@ -15,7 +15,7 @@ function populateSheet() {
   var sheets = ss.getSheets();
   var names = sheets.map(function(s) { return s.getName(); });
   
-  ["Exhibitions", "Artists", "Exhibition_Artists"].forEach(function(name) {
+  ["Exhibitions", "Artists", "Exhibition_Artists", "Editions"].forEach(function(name) {
     if (names.indexOf(name) >= 0) {
       ss.getSheetByName(name).clear();
     } else {
@@ -93,6 +93,26 @@ function populateSheet() {
   linkSheet.setFrozenRows(1);
   linkSheet.autoResizeColumns(1, 2);
 
+  // === EDITIONS ===
+  var editSheet = ss.getSheetByName("Editions");
+  editSheet.getRange(1, 1, 1, 13).setValues([[
+    "id", "artist_id", "title", "year", "medium", "dimensions",
+    "edition_size", "price", "currency", "availability", "description",
+    "image", "buy_url"
+  ]]);
+
+  var editions = [
+    ["garcon-jog-mode", "salomon-garcon", "Jog Mode", "2025", "Archival pigment print", "29.7 × 42 cm", "Edition of 25 + 2 AP", "£450", "GBP", "available", "Edition produced on the occasion of Jog Mode at Raven Row, 2025.", "/media/sunset beach/_DSC0182.jpg", ""],
+    ["garcon-sunset-beach", "salomon-garcon", "Sunset Beach", "2024", "Giclée print on cotton rag", "50 × 70 cm", "Edition of 10 + 2 AP", "£800", "GBP", "sold", "Edition produced on the occasion of sunset beach at 243Luz, Margate, 2024.", "/media/sunset beach/_DSC0198.jpg", ""],
+    ["garcon-anansi-web", "salomon-garcon", "Anansi's Web", "2025", "Risograph on paper", "A3", "Edition of 50", "Price on request", "GBP", "enquire", "Risograph edition accompanying the performance Anansi's Web – Dimanche.", "/media/sunset beach/_DSC0230.jpg", ""],
+    ["payne-lie-down", "iw-payne", "Lie Down I Think I Love You", "2024", "Archival pigment print", "40 × 50 cm", "Edition of 15", "£350", "GBP", "available", "Edition produced on the occasion of the exhibition at 243Luz, 2024.", "/media/I.W. Payne  Lie down I think I love you/DSCF9120.jpg", ""],
+    ["deacon-untitled", "lizzy-deacon", "Untitled", "2025", "Monotype", "30 × 40 cm", "Unique", "£600", "GBP", "available", "Unique monotype.", "", ""],
+  ];
+
+  editSheet.getRange(2, 1, editions.length, 13).setValues(editions);
+  editSheet.setFrozenRows(1);
+  editSheet.autoResizeColumns(1, 13);
+
   // Move tabs to correct order
   ss.setActiveSheet(ss.getSheetByName("Exhibitions"));
   ss.moveActiveSheet(1);
@@ -100,6 +120,8 @@ function populateSheet() {
   ss.moveActiveSheet(2);
   ss.setActiveSheet(ss.getSheetByName("Exhibition_Artists"));
   ss.moveActiveSheet(3);
+  ss.setActiveSheet(ss.getSheetByName("Editions"));
+  ss.moveActiveSheet(4);
 
-  SpreadsheetApp.getUi().alert("Done! Sheets populated with 18 exhibitions, 4 artists, and 3 links.");
+  SpreadsheetApp.getUi().alert("Done! Sheets populated with 18 exhibitions, 4 artists, 3 links, and 5 editions.");
 }

@@ -5,6 +5,7 @@ import faviconUrl from "../assets/logo-favicon.jpg";
 const currentPath = Astro.url.pathname;
 const isExhibitions = currentPath.startsWith("/exhibitions");
 const isArtists = currentPath.startsWith("/artists");
+const isEditions = currentPath.startsWith("/editions");
 ---
 
 <!doctype html>
@@ -29,6 +30,7 @@ const isArtists = currentPath.startsWith("/artists");
         <div class="nav-links">
           <a href="/exhibitions" aria-current={isExhibitions ? "page" : undefined} class:list={[{ active: isExhibitions }]}>Exhibitions</a>
           <a href="/artists" aria-current={isArtists ? "page" : undefined} class:list={[{ active: isArtists }]}>Artists</a>
+          <a href="/editions" aria-current={isEditions ? "page" : undefined} class:list={[{ active: isEditions }]}>Editions</a>
         </div>
       </nav>
     </header>

@@ -1,0 +1,204 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getEditionArtists, getEditionsByArtist, getArtistById } from "../../data";
+
+export function getStaticPaths() {
+  return getEditionArtists().map((a) => ({ params: { artistId: a.id } }));
+}
+
+const { artistId } = Astro.params;
+const artist = getArtistById(artistId!);
+const editions = getEditionsByArtist(artistId!);
+
+if (!artist || editions.length === 0) {
+  return Astro.redirect("/editions");
+}
+
+function enquiryHref(title: string): string {
+  return `mailto:info@243luz.com?subject=${encodeURIComponent(`Enquiry: ${title}`)}`;
+}
+---
+
+<BaseLayout>
+  <div class="editions-detail">
+    <header class="editions-header">
+      <a href="/editions" class="back-link">← Editions</a>
+      <h1>{artist.name}</h1>
+    </header>
+
+    <div class="edition-list">
+      {editions.map((edition) => (
+        <article class="edition-row">
+          <div class="edition-thumb">
+            {edition.image ? (
+              <img src={edition.image} alt={edition.title} loading="lazy" />
+            ) : (
+              <div class="thumb-placeholder">No image</div>
+            )}
+          </div>
+          <div class="edition-info">
+            <a href={`/editions/${artist.id}/${edition.id}`} class="edition-title">
+              {edition.title}
+            </a>
+            <p class="edition-meta">
+              {edition.year}
+              {edition.editionSize ? ` · ${edition.editionSize}` : ""}
+            </p>
+            <p class="edition-price">{edition.price}</p>
+          </div>
+          <div class="edition-action">
+            {edition.availability === "sold" ? (
+              <span class="status sold">Sold</span>
+            ) : edition.availability === "enquire" ? (
+              <a class="buy-btn" href={enquiryHref(edition.title)}>Enquire</a>
+            ) : (
+              <a
+                class="buy-btn"
+                href={edition.buyUrl || enquiryHref(edition.title)}
+                target="_blank"
+                rel="noopener"
+              >
+                Buy
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .editions-header {
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.65rem;
+    color: #aaa;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: #1a1a1a;
+  }
+
+  .editions-header h1 {
+    font-size: 1.6rem;
+    font-weight: 400;
+  }
+
+  .edition-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .edition-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .edition-thumb {
+    flex: 0 0 90px;
+    width: 90px;
+    height: 90px;
+  }
+
+  .edition-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: #f8f8f8;
+  }
+
+  .thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f8f8;
+    color: #bbb;
+    font-size: 0.7rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  .edition-info {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .edition-title {
+    font-size: 1rem;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .edition-title:hover {
+    opacity: 0.5;
+  }
+
+  .edition-meta {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0.2rem 0 0;
+  }
+
+  .edition-price {
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    margin: 0.25rem 0 0;
+  }
+
+  .edition-action {
+    flex: 0 0 auto;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  .buy-btn {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: #fff;
+    background: #1a1a1a;
+    padding: 0.45rem 1rem;
+    transition: opacity 0.2s;
+  }
+
+  .buy-btn:hover {
+    opacity: 0.7;
+  }
+
+  .status.sold {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+    color: #aaa;
+  }
+
+  @media (max-width: 640px) {
+    .edition-row {
+      gap: 1rem;
+    }
+    .edition-thumb {
+      flex: 0 0 64px;
+      width: 64px;
+      height: 64px;
+    }
+    .edition-action {
+      min-width: 0;
+    }
+  }
+</style>

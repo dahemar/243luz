@@ -1,0 +1,193 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getEditions, getEditionById, getArtistById } from "../../../data";
+
+export function getStaticPaths() {
+  return getEditions().map((e) => ({
+    params: { artistId: e.artistId, editionId: e.id },
+  }));
+}
+
+const { artistId, editionId } = Astro.params;
+const edition = getEditionById(editionId!);
+const artist = getArtistById(artistId!);
+
+if (!edition || !artist) {
+  return Astro.redirect("/editions");
+}
+
+function enquiryHref(title: string): string {
+  return `mailto:info@243luz.com?subject=${encodeURIComponent(`Enquiry: ${title}`)}`;
+}
+---
+
+<BaseLayout>
+  <div class="edition-detail">
+    <header class="edition-header">
+      <a href={`/editions/${artist.id}`} class="back-link">← {artist.name}</a>
+      <h1>{edition.title}</h1>
+      <p class="edition-artist">{artist.name}</p>
+    </header>
+
+    <div class="edition-body">
+      {edition.image && (
+        <figure class="edition-image">
+          <img src={edition.image} alt={edition.title} />
+        </figure>
+      )}
+
+      <dl class="edition-specs">
+        {edition.year && (
+          <>
+            <dt>Year</dt>
+            <dd>{edition.year}</dd>
+          </>
+        )}
+        {edition.medium && (
+          <>
+            <dt>Medium</dt>
+            <dd>{edition.medium}</dd>
+          </>
+        )}
+        {edition.dimensions && (
+          <>
+            <dt>Dimensions</dt>
+            <dd>{edition.dimensions}</dd>
+          </>
+        )}
+        {edition.editionSize && (
+          <>
+            <dt>Edition</dt>
+            <dd>{edition.editionSize}</dd>
+          </>
+        )}
+        <dt>Price</dt>
+        <dd>{edition.price}</dd>
+      </dl>
+
+      {edition.description && <p class="edition-desc">{edition.description}</p>}
+
+      <div class="edition-purchase">
+        {edition.availability === "sold" ? (
+          <span class="status sold">Sold</span>
+        ) : edition.availability === "enquire" ? (
+          <a class="buy-btn" href={enquiryHref(edition.title)}>Enquire</a>
+        ) : (
+          <a
+            class="buy-btn"
+            href={edition.buyUrl || enquiryHref(edition.title)}
+            target="_blank"
+            rel="noopener"
+          >
+            Buy
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .edition-header {
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.65rem;
+    color: #aaa;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: #1a1a1a;
+  }
+
+  .edition-header h1 {
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+
+  .edition-artist {
+    font-size: 0.9rem;
+    color: #888;
+  }
+
+  .edition-body {
+    max-width: 620px;
+  }
+
+  .edition-image {
+    margin: 0 0 1.5rem;
+    line-height: 0;
+  }
+
+  .edition-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #f8f8f8;
+  }
+
+  .edition-specs {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    row-gap: 0.4rem;
+    column-gap: 1rem;
+    margin: 0 0 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .edition-specs dt {
+    color: #888;
+  }
+
+  .edition-specs dd {
+    margin: 0;
+    color: #1a1a1a;
+  }
+
+  .edition-desc {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .edition-purchase {
+    margin-top: 0.5rem;
+  }
+
+  .buy-btn {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: #fff;
+    background: #1a1a1a;
+    padding: 0.55rem 1.4rem;
+    transition: opacity 0.2s;
+  }
+
+  .buy-btn:hover {
+    opacity: 0.7;
+  }
+
+  .status.sold {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    color: #aaa;
+  }
+
+  @media (max-width: 640px) {
+    .edition-specs {
+      grid-template-columns: 90px 1fr;
+    }
+  }
+</style>

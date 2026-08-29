@@ -1,0 +1,85 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getEditionArtists, getEditionsByArtist } from "../../data";
+
+const artists = getEditionArtists();
+---
+
+<BaseLayout>
+  <div class="page-header">
+    <h1>Editions</h1>
+  </div>
+
+  <div class="editions-table-wrap">
+    <table class="editions-table">
+      <tbody>
+        {artists.map((artist) => {
+          const editions = getEditionsByArtist(artist.id);
+          return (
+            <tr>
+              <td class="col-name">
+                <a href={`/editions/${artist.id}`}>{artist.name}</a>
+              </td>
+              <td class="col-count">
+                {editions.length} {editions.length === 1 ? "edition" : "editions"}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</BaseLayout>
+
+<style>
+  .editions-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .editions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .editions-table td {
+    padding: 0.65rem 0;
+    text-align: left;
+    vertical-align: baseline;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .col-name {
+    width: 70%;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    padding-right: 2rem;
+  }
+
+  .col-name a {
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: opacity 0.2s;
+  }
+
+  .col-name a:hover {
+    opacity: 0.5;
+  }
+
+  .col-count {
+    font-size: 0.75rem;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .editions-table td {
+      padding: 0.5rem 0;
+    }
+    .col-name {
+      font-size: 0.85rem;
+      padding-right: 1rem;
+    }
+  }
+</style>

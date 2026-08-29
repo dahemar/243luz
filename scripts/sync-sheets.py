@@ -168,6 +168,66 @@ def generate_exhibitions(exh_rows: list[dict], link_rows: list[dict]):
     print(f"  → {out} ({len(exh_rows)} exhibitions)")
 
 
+def js_str(value: str) -> str:
+    return (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", "\\n")
+    )
+
+
+def generate_editions(rows: list[dict]):
+    lines = [
+        'export type EditionAvailability = "available" | "sold" | "enquire";',
+        "",
+        "export interface Edition {",
+        "  id: string;",
+        "  artistId: string;",
+        "  title: string;",
+        "  year: string;",
+        "  medium: string;",
+        "  dimensions: string;",
+        "  editionSize: string;",
+        "  price: string;",
+        "  currency: string;",
+        "  availability: EditionAvailability;",
+        "  description: string;",
+        "  image: string;",
+        "  buyUrl: string;",
+        "}",
+        "",
+        "const editions: Edition[] = [",
+    ]
+    for r in rows:
+        availability = r.get("availability", "available").strip().lower()
+        if availability not in ("available", "sold", "enquire"):
+            availability = "available"
+        lines.append("  {")
+        lines.append(f'    id: "{js_str(r["id"])}",')
+        lines.append(f'    artistId: "{js_str(r.get("artist_id", ""))}",')
+        lines.append(f'    title: "{js_str(r.get("title", ""))}",')
+        lines.append(f'    year: "{js_str(r.get("year", ""))}",')
+        lines.append(f'    medium: "{js_str(r.get("medium", ""))}",')
+        lines.append(f'    dimensions: "{js_str(r.get("dimensions", ""))}",')
+        lines.append(f'    editionSize: "{js_str(r.get("edition_size", ""))}",')
+        lines.append(f'    price: "{js_str(r.get("price", ""))}",')
+        lines.append(f'    currency: "{js_str(r.get("currency", ""))}",')
+        lines.append(f'    availability: "{availability}",')
+        lines.append(f'    description: "{js_str(r.get("description", ""))}",')
+        lines.append(f'    image: "{js_str(r.get("image", ""))}",')
+        lines.append(f'    buyUrl: "{js_str(r.get("buy_url", ""))}",')
+        lines.append("  },")
+    lines.append("];")
+    lines.append("")
+    lines.append("export default editions;")
+    lines.append("")
+
+    out = os.path.join(DATA_DIR, "editions.ts")
+    with open(out, "w") as f:
+        f.write("\n".join(lines))
+    print(f"  → {out} ({len(rows)} editions)")
+
+
 def download_wix_media(folders: list[str]):
     if not WIX_API_KEY or not WIX_SITE_ID:
         print("  Skipping Wix media (no env vars)")
@@ -274,6 +334,14 @@ def main():
     link_rows = rows_to_dicts(links_data)
     print(f"  Artist-Exhibition links: {len(link_rows)}")
 
+    try:
+        editions_data = fetch_sheet("Editions")
+        edition_rows = rows_to_dicts(editions_data)
+        print(f"  Editions: {len(edition_rows)}")
+    except Exception as e:
+        print(f"  Editions tab not found, skipping ({e})")
+        edition_rows = []
+
     print("\n[2/4] Downloading Wix media...")
     exh_folders = [r.get("wix_folder_name", "") for r in exh_rows]
     art_folders = [r.get("wix_folder", "") for r in art_rows if r.get("wix_folder")]
@@ -291,6 +359,10 @@ def main():
     print("\n[3/4] Generating TypeScript data files...")
     generate_artists(art_rows, link_rows)
     generate_exhibitions(exh_rows, link_rows)
+    if edition_rows:
+        generate_editions(edition_rows)
+    else:
+        print("  No Editions rows; keeping existing editions.ts")
 
     print("\n[4/4] Generating image manifests...")
     if not folder_images:
