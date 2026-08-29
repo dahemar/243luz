@@ -4,3 +4,14 @@ dist/
 *.log
 .astro/
 public/
+
+# Environment / secrets — never commit real keys
+.env
+.env.*
+!.env.example
+
+# Service account / credential files
+*.service-account.json
+service-account.json
+*.pem
+.tmp/
