@@ -129,20 +129,22 @@ async function resolveFolderImages(
     nameToId.set(name, f.id);
   }
 
-  for (const folderName of unique) {
-    const fid = nameToId.get(folderName);
-    if (!fid) {
-      result.set(folderName, []);
-      continue;
-    }
-    const files = await wixPaginate("files", { "paging.limit": "100", parentFolderId: fid }, "files");
-    result.set(
-      folderName,
-      files
-        .map((ff) => ({ name: sanitize(ff.displayName || ""), url: ff.url || "" }))
-        .filter((x) => x.url)
-    );
-  }
+  await Promise.all(
+    unique.map(async (folderName) => {
+      const fid = nameToId.get(folderName);
+      if (!fid) {
+        result.set(folderName, []);
+        return;
+      }
+      const files = await wixPaginate("files", { "paging.limit": "100", parentFolderId: fid }, "files");
+      result.set(
+        folderName,
+        files
+          .map((ff) => ({ name: sanitize(ff.displayName || ""), url: ff.url || "" }))
+          .filter((x) => x.url)
+      );
+    })
+  );
   return result;
 }
 
