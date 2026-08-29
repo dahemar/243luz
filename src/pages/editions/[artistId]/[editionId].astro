@@ -12,7 +12,7 @@ const { artistId, editionId } = Astro.params;
 const edition = getEditionById(editionId!);
 const artist = getArtistById(artistId!);
 
-if (!edition || !artist) {
+if (!edition || !artist || edition.artistId !== artistId) {
   return Astro.redirect("/editions");
 }
 
