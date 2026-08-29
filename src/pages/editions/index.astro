@@ -1,8 +1,12 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getEditionArtists, getEditionsByArtist } from "../../data";
+import { getEditionArtists, getEditionsByArtist } from "../../lib/cms";
 
-const artists = getEditionArtists();
+const artists = await getEditionArtists();
+const editionsCount = new Map<string, number>();
+for (const artist of artists) {
+  editionsCount.set(artist.id, (await getEditionsByArtist(artist.id)).length);
+}
 ---
 
 <BaseLayout>
@@ -14,14 +18,14 @@ const artists = getEditionArtists();
     <table class="editions-table">
       <tbody>
         {artists.map((artist) => {
-          const editions = getEditionsByArtist(artist.id);
+          const count = editionsCount.get(artist.id) || 0;
           return (
             <tr>
               <td class="col-name">
                 <a href={`/editions/${artist.id}`}>{artist.name}</a>
               </td>
               <td class="col-count">
-                {editions.length} {editions.length === 1 ? "edition" : "editions"}
+                {count} {count === 1 ? "edition" : "editions"}
               </td>
             </tr>
           );

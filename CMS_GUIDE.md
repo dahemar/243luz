@@ -90,11 +90,12 @@ You don't need to upload images individually to the site — just manage them in
 
 ## How to see changes live
 
-The website rebuilds automatically when changes are pushed to GitHub. The full pipeline is:
+The website reads the Google Sheet **directly at request time** (server-rendered). No rebuild or deploy is needed:
 
 1. Edit the Google Sheet
-2. Trigger a build (push to GitHub, or redeploy on Vercel)
-3. The site reads the Sheet → downloads images from Wix → generates a fresh static site
+2. Reload the page — changes appear within ~1 minute (there is a short cache)
+
+Images are resolved live from Wix Media Manager using the folder names in the sheet.
 
 ---
 
@@ -114,7 +115,8 @@ Make sure the URL starts with `http://` or `https://`. Links are auto-detected.
 ## How to rebuild the site locally
 
 ```
-npm run sync-sheets    # Pull data from Google Sheets + download Wix images
-npm run dev            # Start local server at http://localhost:4321
-npm run build          # Full build → output in dist/
+npm run dev            # Start local server at http://localhost:4321 (reads Sheets live)
+npm run build          # Build server output for Vercel
 ```
+
+For local image resolution, set `WIX_API_KEY` and `WIX_SITE_ID` in a `.env` file (see `.env.example`). Without them, text loads live but images are empty locally.

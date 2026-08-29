@@ -1,14 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getEditionArtists, getEditionsByArtist, getArtistById } from "../../data";
-
-export function getStaticPaths() {
-  return getEditionArtists().map((a) => ({ params: { artistId: a.id } }));
-}
+import { getArtistById, getEditionsByArtist } from "../../lib/cms";
 
 const { artistId } = Astro.params;
-const artist = getArtistById(artistId!);
-const editions = getEditionsByArtist(artistId!);
+const artist = await getArtistById(artistId!);
+const editions = await getEditionsByArtist(artistId!);
 
 if (!artist || editions.length === 0) {
   return Astro.redirect("/editions");

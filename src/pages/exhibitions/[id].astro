@@ -1,26 +1,17 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getExhibitions, getExhibitionById } from "../../data";
-import exhibitionImages from "../../data/exhibitionImages";
+import { getExhibitionsNewestFirst, getExhibitionById } from "../../lib/cms";
 import ImageViewer from "../../components/ImageViewer.astro";
 
-export function getStaticPaths() {
-  const exhibitions = getExhibitions().filter((e) => e.id);
-  return exhibitions.map((e) => ({ params: { id: e.id } }));
-}
-
 const { id } = Astro.params;
-const exhibition = getExhibitionById(id!);
-const allExhibitions = getExhibitions().sort(
-  (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-);
+const exhibition = await getExhibitionById(id!);
+const allExhibitions = await getExhibitionsNewestFirst();
 
 if (!exhibition) {
   return Astro.redirect("/exhibitions");
 }
 
-const images: string[] = exhibitionImages[exhibition.folder] || [];
-const imagePaths = images.map((img) => `/media/${exhibition.folder}/${img}`);
+const imagePaths: string[] = exhibition.images;
 
 const currentIndex = allExhibitions.findIndex((e) => e.id === id);
 const prevExhibition = currentIndex < allExhibitions.length - 1 ? allExhibitions[currentIndex + 1] : null;

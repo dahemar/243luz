@@ -1,29 +1,19 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getArtists, getArtistById, getArtistExhibitions } from "../../data";
+import { getArtistById, getArtistExhibitions } from "../../lib/cms";
 import ImageViewer from "../../components/ImageViewer.astro";
-import artistImagesData from "../../data/artistImages.ts";
-
-export function getStaticPaths() {
-  const artists = getArtists();
-  return artists
-    .filter(a => a.biography || getArtistExhibitions(a.id).length > 0)
-    .map((a) => ({ params: { id: a.id } }));
-}
 
 const { id } = Astro.params;
-const artist = getArtistById(id!);
+const artist = await getArtistById(id!);
 
 if (!artist) {
   return Astro.redirect("/artists");
 }
 
-const exhibitions = getArtistExhibitions(artist.id);
+const exhibitions = await getArtistExhibitions(artist.id);
 
 // Artist gallery images from Wix folder
-const artistImages: string[] = (artistImagesData[artist.id] || []).map(
-  (img: string) => `/media/${artist.wixFolder}/${img}`
-);
+const artistImages: string[] = artist.images;
 
 function formatDate(dateStr: string): string {
   return dateStr;

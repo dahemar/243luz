@@ -1,13 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getExhibitions, getArtists } from "../../data";
-import type { Exhibition } from "../../data/exhibitions";
+import { getExhibitionsNewestFirst, getArtists } from "../../lib/cms";
 
-const exhibitions: Exhibition[] = getExhibitions().sort(
-  (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-);
-
-const galleryArtists = getArtists();
+const exhibitions = await getExhibitionsNewestFirst();
+const galleryArtists = await getArtists();
 const artistIds = new Set(galleryArtists.map((a) => a.id));
 
 function formatDate(dateStr: string): string {

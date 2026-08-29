@@ -1,9 +1,12 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getArtists, getArtistExhibitions } from "../../data";
-import type { Artist } from "../../data/artists";
+import { getArtists, getArtistExhibitions, type Exhibition } from "../../lib/cms";
 
-const artists: Artist[] = getArtists();
+const artists = await getArtists();
+const exhibitionsByArtist = new Map<string, Exhibition[]>();
+for (const artist of artists) {
+  exhibitionsByArtist.set(artist.id, await getArtistExhibitions(artist.id));
+}
 ---
 
 <BaseLayout>
@@ -15,7 +18,7 @@ const artists: Artist[] = getArtists();
     <table class="artists-table">
       <tbody>
         {artists.map((artist) => {
-          const exhibitions = getArtistExhibitions(artist.id);
+          const exhibitions = exhibitionsByArtist.get(artist.id) || [];
           const hasDetail = artist.biography || exhibitions.length > 0;
           return (
             <tr>
