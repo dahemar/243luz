@@ -46,7 +46,7 @@ interface Cms {
 const SHEETS_ID = "1I2ab8Lq6vy03UFU7aQ7tCnyddoh8Y06YD_drcH48CzI";
 const SHEETS_API_KEY = "AIzaSyBHQgbSv588A3qr-Kzeo6YrZ9TbVNlrSkc";
 const WIX_API = "https://www.wixapis.com/site-media/v1";
-const CACHE_TTL = 60_000;
+const CACHE_TTL = 15_000;
 
 let cache: { data: Cms; at: number } | null = null;
 
