@@ -30,7 +30,7 @@ const editions: Edition[] = [
     availability: "available",
     description: "Edition produced on the occasion of Jog Mode at Raven Row, 2025.",
     image: "/media/sunset beach/_DSC0182.jpg",
-    buyUrl: "",
+    buyUrl: "https://buy.stripe.com/4gM28q5Oy68T6Nj6FC5c400",
   },
   {
     id: "garcon-sunset-beach",
@@ -75,7 +75,7 @@ const editions: Edition[] = [
     availability: "available",
     description: "Edition produced on the occasion of the exhibition at 243Luz, 2024.",
     image: "/media/I.W. Payne  Lie down I think I love you/DSCF9120.jpg",
-    buyUrl: "",
+    buyUrl: "https://buy.stripe.com/7sY7sK2Cm40L2x3fc85c401",
   },
   {
     id: "deacon-untitled",
@@ -90,7 +90,7 @@ const editions: Edition[] = [
     availability: "available",
     description: "Unique monotype.",
     image: "",
-    buyUrl: "",
+    buyUrl: "https://buy.stripe.com/5kQ4gydh0btd6Nj5By5c402",
   },
 ];
 
