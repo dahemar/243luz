@@ -5,7 +5,7 @@ import exhibitionImages from "../../data/exhibitionImages";
 import ImageViewer from "../../components/ImageViewer.astro";
 
 export function getStaticPaths() {
-  const exhibitions = getExhibitions();
+  const exhibitions = getExhibitions().filter((e) => e.id);
   return exhibitions.map((e) => ({ params: { id: e.id } }));
 }
 
