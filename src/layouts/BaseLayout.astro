@@ -1,6 +1,12 @@
 ---
 import logoUrl from "../assets/logo.jpg";
 import faviconUrl from "../assets/logo-favicon.jpg";
+import { getSiteSettings } from "../lib/cms";
+
+const settings = await getSiteSettings();
+const subscribeLabel = settings["subscribe_label"] || "Subscribe";
+const subscribeUrl = settings["subscribe_url"] || "";
+const siteTagline = settings["site_tagline"] || "243 Luz — An art gallery in London";
 
 const currentPath = Astro.url.pathname;
 const isExhibitions = currentPath.startsWith("/exhibitions");
@@ -12,7 +18,7 @@ const isArtists = currentPath.startsWith("/artists");
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="243 Luz — An art gallery in London" />
+    <meta name="description" content={siteTagline} />
     <title>243 Luz</title>
     <link rel="icon" type="image/jpeg" href={faviconUrl.src} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,14 +44,16 @@ const isArtists = currentPath.startsWith("/artists");
     </main>
 
     <footer class="site-footer">
-      <a
-        class="subscribe-link"
-        href="https://eepurl.com/IXOJi68msZ"
-        target="_blank"
-        rel="noopener"
-      >
-        Subscribe
-      </a>
+      {subscribeUrl && (
+        <a
+          class="subscribe-link"
+          href={subscribeUrl}
+          target="_blank"
+          rel="noopener"
+        >
+          {subscribeLabel}
+        </a>
+      )}
     </footer>
   </body>
 </html>
@@ -191,7 +199,6 @@ const isArtists = currentPath.startsWith("/artists");
   .site-footer {
     padding: 4rem 0 3rem;
     margin-top: 2rem;
-    border-top: 1px solid #e5e5e5;
   }
 
   .subscribe-link {

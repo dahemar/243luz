@@ -41,6 +41,7 @@ interface Cms {
   exhibitions: Exhibition[];
   artists: Artist[];
   editions: Edition[];
+  settings: Record<string, string>;
 }
 
 const SHEETS_ID = "1I2ab8Lq6vy03UFU7aQ7tCnyddoh8Y06YD_drcH48CzI";
@@ -68,16 +69,31 @@ function rowsToObjects(rows: string[][]): Record<string, string>[] {
   return result;
 }
 
-async function fetchSheet(tab: string): Promise<Record<string, string>[]> {
+async function fetchRaw(tab: string): Promise<string[][]> {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEETS_ID}/values/${encodeURIComponent(tab)}?key=${SHEETS_API_KEY}`;
   try {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return [];
     const data = (await res.json()) as { values?: string[][] };
-    return rowsToObjects(data.values ?? []);
+    return data.values ?? [];
   } catch {
     return [];
   }
+}
+
+async function fetchSheet(tab: string): Promise<Record<string, string>[]> {
+  return rowsToObjects(await fetchRaw(tab));
+}
+
+async function fetchKeyValues(tab: string): Promise<Record<string, string>> {
+  const rows = await fetchRaw(tab);
+  const result: Record<string, string> = {};
+  for (let r = 1; r < rows.length; r++) {
+    const key = (rows[r][0] ?? "").trim();
+    const value = (rows[r][1] ?? "").trim();
+    if (key) result[key] = value;
+  }
+  return result;
 }
 
 async function wixGet(path: string, params: Record<string, string>): Promise<any> {
@@ -171,11 +187,12 @@ function startDateToTime(dateStr: string): number {
 }
 
 async function loadCms(): Promise<Cms> {
-  const [exhRows, artRows, linkRows, editRows] = await Promise.all([
+  const [exhRows, artRows, linkRows, editRows, settings] = await Promise.all([
     fetchSheet("Exhibitions"),
     fetchSheet("Artists"),
     fetchSheet("Exhibitions_Artists"),
     fetchSheet("Editions"),
+    fetchKeyValues("Settings"),
   ]);
 
   const artToExh: Record<string, string[]> = {};
@@ -242,7 +259,7 @@ async function loadCms(): Promise<Cms> {
     };
   });
 
-  return { exhibitions, artists, editions };
+  return { exhibitions, artists, editions, settings };
 }
 
 async function getCms(): Promise<Cms> {
@@ -300,4 +317,8 @@ export async function getEditionArtists(): Promise<Artist[]> {
   const editions = await getEditions();
   const ids = new Set(editions.map((e) => e.artistId));
   return (await getArtists()).filter((a) => ids.has(a.id));
+}
+
+export async function getSiteSettings(): Promise<Record<string, string>> {
+  return (await getCms()).settings;
 }
