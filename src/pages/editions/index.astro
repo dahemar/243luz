@@ -2,6 +2,9 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getEditionArtists, getEditionsByArtist } from "../../lib/cms";
 
+// Editions section temporarily disabled — redirect to home
+return Astro.redirect("/");
+
 const artists = await getEditionArtists();
 const editionsCount = new Map<string, number>();
 for (const artist of artists) {

@@ -1,12 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getArtists, getArtistExhibitions, type Exhibition } from "../../lib/cms";
+import { getArtists } from "../../lib/cms";
 
 const artists = await getArtists();
-const exhibitionsByArtist = new Map<string, Exhibition[]>();
-for (const artist of artists) {
-  exhibitionsByArtist.set(artist.id, await getArtistExhibitions(artist.id));
-}
 ---
 
 <BaseLayout>
@@ -17,29 +13,11 @@ for (const artist of artists) {
   <div class="artists-table-wrap">
     <table class="artists-table">
       <tbody>
-        {artists.map((artist) => {
-          const exhibitions = exhibitionsByArtist.get(artist.id) || [];
-          const hasDetail = artist.biography || exhibitions.length > 0;
-          return (
-            <tr>
-              <td class="col-name">
-                {hasDetail ? (
-                  <a href={`/artists/${artist.id}`}>{artist.name}</a>
-                ) : (
-                  artist.name
-                )}
-              </td>
-              <td class="col-exhibitions">
-                {exhibitions.map((ex, i) => (
-                  <>
-                    <a href={`/exhibitions/${ex.id}`}>{ex.title}</a>
-                    {i < exhibitions.length - 1 && ", "}
-                  </>
-                ))}
-              </td>
-            </tr>
-          );
-        })}
+        {artists.map((artist) => (
+          <tr>
+            <td class="col-name">{artist.name}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   </div>
@@ -57,7 +35,6 @@ for (const artist of artists) {
     font-size: 0.9rem;
   }
 
-  .artists-table th,
   .artists-table td {
     padding: 0.65rem 0;
     text-align: left;
@@ -66,48 +43,17 @@ for (const artist of artists) {
   }
 
   .col-name {
-    width: 55%;
+    width: 100%;
     font-size: 0.95rem;
     color: #1a1a1a;
-    padding-right: 2rem;
-  }
-
-  .col-name a {
-    text-decoration: none;
-    color: #1a1a1a;
-  }
-
-  .col-name a:hover {
-    opacity: 0.5;
-  }
-
-  .col-exhibitions {
-    font-size: 0.8rem;
-    color: #666;
-    font-style: italic;
-  }
-
-  .col-exhibitions a {
-    text-decoration: none;
-    color: #666;
-    font-style: normal;
-  }
-
-  .col-exhibitions a:hover {
-    opacity: 0.5;
   }
 
   @media (max-width: 640px) {
-    .artists-table th,
     .artists-table td {
       padding: 0.5rem 0;
     }
     .col-name {
       font-size: 0.85rem;
-      padding-right: 1rem;
-    }
-    .col-exhibitions {
-      font-size: 0.72rem;
     }
   }
 </style>

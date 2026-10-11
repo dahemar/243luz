@@ -2,6 +2,9 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { getEditionById, getArtistById } from "../../../lib/cms";
 
+// Editions section temporarily disabled — redirect to home
+return Astro.redirect("/");
+
 const { artistId, editionId } = Astro.params;
 const edition = await getEditionById(editionId!);
 const artist = await getArtistById(artistId!);
