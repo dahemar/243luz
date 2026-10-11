@@ -36,6 +36,17 @@ const isArtists = currentPath.startsWith("/artists");
     <main>
       <slot />
     </main>
+
+    <footer class="site-footer">
+      <a
+        class="subscribe-link"
+        href="https://eepurl.com/IXOJi68msZ"
+        target="_blank"
+        rel="noopener"
+      >
+        Subscribe
+      </a>
+    </footer>
   </body>
 </html>
 
@@ -175,5 +186,23 @@ const isArtists = currentPath.startsWith("/artists");
       padding: 1rem 0 0.75rem;
       margin-bottom: 1.5rem;
     }
+  }
+
+  .site-footer {
+    padding: 4rem 0 3rem;
+    margin-top: 2rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .subscribe-link {
+    font-family: "EB Garamond", Georgia, serif;
+    font-size: 0.85rem;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .subscribe-link:hover {
+    opacity: 0.5;
   }
 </style>
