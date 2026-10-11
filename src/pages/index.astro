@@ -1,11 +1,51 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getExhibitionsNewestFirst } from "../lib/cms";
+
+const latestShow = (await getExhibitionsNewestFirst())[0];
+
+function ordinal(n: number): string {
+  const r10 = n % 10;
+  const r100 = n % 100;
+  if (r10 === 1 && r100 !== 11) return "st";
+  if (r10 === 2 && r100 !== 12) return "nd";
+  if (r10 === 3 && r100 !== 13) return "rd";
+  return "th";
+}
+
+function formatShowDate(dateStr: string, includeYear: boolean): string {
+  const m = dateStr.trim().match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+  if (m) {
+    const day = parseInt(m[1], 10);
+    const month = m[2].charAt(0).toUpperCase() + m[2].slice(1).toLowerCase();
+    const year = m[3];
+    return includeYear
+      ? `${month} ${day}${ordinal(day)}, ${year}`
+      : `${month} ${day}${ordinal(day)}`;
+  }
+  return dateStr;
+}
 ---
 
 <BaseLayout>
   <div class="home">
+    {latestShow && (
+      <div class="home-show">
+        <a href={`/exhibitions/${latestShow.id}`} class="home-show-title">
+          {latestShow.title}
+        </a>
+        {latestShow.description && (
+          <p class="home-show-artist">{latestShow.description}</p>
+        )}
+        <p class="home-show-dates">
+          {formatShowDate(latestShow.startDate, false)} -{" "}
+          {formatShowDate(latestShow.endDate, true)}
+        </p>
+      </div>
+    )}
+
     <div class="home-contact">
-      <p class="home-label">Opening Hours</p>
+      <p class="home-label">Opening Hours:</p>
       <p class="home-text">Wednesday – Saturday, 1 – 6 pm</p>
 
       <p class="home-address">
@@ -23,30 +63,65 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <style>
   .home {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
     min-height: calc(100svh - 9rem);
-    max-width: 480px;
-    padding-bottom: 3rem;
   }
+
+  .home-show {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-show-title {
+    font-size: 1.35rem;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .home-show-title:hover {
+    opacity: 0.6;
+  }
+
+  .home-show-artist {
+    font-size: 1rem;
+    color: #1a1a1a;
+    margin-top: 0.15rem;
+  }
+
+  .home-show-dates {
+    font-size: 0.85rem;
+    color: #1a1a1a;
+    margin-top: 0.15rem;
+  }
+
   .home-contact {
+    margin-top: auto;
+    padding-top: 4rem;
+    padding-bottom: 3rem;
     line-height: 1.3;
+    max-width: 480px;
   }
+
   .home-label {
     font-size: 1.1rem;
     color: #1a1a1a;
     margin-bottom: 0;
   }
+
   .home-text {
     font-size: 1.1rem;
     color: #1a1a1a;
     margin-bottom: 1.5rem;
   }
+
   .home-address {
     font-size: 1.1rem;
     color: #1a1a1a;
     font-style: normal;
     margin-bottom: 1.25rem;
   }
+
   .home-email a {
     font-size: 1.1rem;
     color: #1a1a1a;
