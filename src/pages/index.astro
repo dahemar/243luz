@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getExhibitionsNewestFirst } from "../lib/cms";
+import { getExhibitionsNewestFirst, getEvents } from "../lib/cms";
 
 const latestShow = (await getExhibitionsNewestFirst())[0];
+const events = await getEvents();
 
 function ordinal(n: number): string {
   const r10 = n % 10;
@@ -25,6 +26,20 @@ function formatShowDate(dateStr: string, includeYear: boolean): string {
   }
   return dateStr;
 }
+
+function bookingLinks(event: {
+  bookingUrl: string;
+  bookingUrl2: string;
+  date: string;
+}): { label: string; url: string }[] {
+  if (!event.bookingUrl) return [];
+  if (!event.bookingUrl2) return [{ label: "", url: event.bookingUrl }];
+  const parts = event.date.split("&").map((s) => s.trim());
+  return [
+    { label: parts[0] || "", url: event.bookingUrl },
+    { label: parts[1] || "", url: event.bookingUrl2 },
+  ];
+}
 ---
 
 <BaseLayout>
@@ -42,6 +57,38 @@ function formatShowDate(dateStr: string, includeYear: boolean): string {
           {formatShowDate(latestShow.endDate, true)}
         </p>
       </div>
+    )}
+
+    {events.length > 0 && (
+      <section class="programme">
+        <h2 class="programme-title">Programme</h2>
+        <ul class="programme-list">
+          {events.map((event) => (
+            <li class="programme-event">
+              <h3 class="event-name">{event.name}</h3>
+              <p class="event-meta">
+                {event.date}
+                {event.location ? ` · ${event.location}` : ""}
+              </p>
+              {event.brief && <p class="event-brief">{event.brief}</p>}
+              {bookingLinks(event).length > 0 && (
+                <div class="event-register-group">
+                  {bookingLinks(event).map((link) => (
+                    <a
+                      class="event-register"
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Register here{link.label ? ` (${link.label})` : ""}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
     )}
 
     <div class="home-contact">
@@ -95,6 +142,67 @@ function formatShowDate(dateStr: string, includeYear: boolean): string {
     font-size: 0.85rem;
     color: #1a1a1a;
     margin-top: 0.15rem;
+  }
+
+  .programme {
+    padding-top: 3rem;
+    margin-top: 3rem;
+  }
+
+  .programme-title {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #aaa;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+
+  .programme-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .programme-event {
+    max-width: 620px;
+  }
+
+  .event-name {
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: #1a1a1a;
+  }
+
+  .event-meta {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.1rem;
+  }
+
+  .event-brief {
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.6;
+    margin-top: 0.6rem;
+  }
+
+  .event-register-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.75rem;
+  }
+
+  .event-register {
+    font-size: 0.85rem;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .event-register:hover {
+    opacity: 0.5;
   }
 
   .home-contact {

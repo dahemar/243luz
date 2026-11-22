@@ -37,10 +37,21 @@ export interface Edition {
   buyUrl: string;
 }
 
+export interface Event {
+  id: string;
+  name: string;
+  date: string;
+  location: string;
+  brief: string;
+  bookingUrl: string;
+  bookingUrl2: string;
+}
+
 interface Cms {
   exhibitions: Exhibition[];
   artists: Artist[];
   editions: Edition[];
+  events: Event[];
   settings: Record<string, string>;
 }
 
@@ -187,11 +198,12 @@ function startDateToTime(dateStr: string): number {
 }
 
 async function loadCms(): Promise<Cms> {
-  const [exhRows, artRows, linkRows, editRows, settings] = await Promise.all([
+  const [exhRows, artRows, linkRows, editRows, eventRows, settings] = await Promise.all([
     fetchSheet("Exhibitions"),
     fetchSheet("Artists"),
     fetchSheet("Exhibitions_Artists"),
     fetchSheet("Editions"),
+    fetchSheet("Events"),
     fetchKeyValues("Settings"),
   ]);
 
@@ -259,7 +271,17 @@ async function loadCms(): Promise<Cms> {
     };
   });
 
-  return { exhibitions, artists, editions, settings };
+  const events: Event[] = eventRows.map((r) => ({
+    id: r["id"],
+    name: r["name"] || "",
+    date: r["date"] || "",
+    location: r["location"] || "",
+    brief: (r["brief"] || "").replace(/\\n/g, "\n"),
+    bookingUrl: r["booking_url"] || "",
+    bookingUrl2: r["booking_url_2"] || "",
+  }));
+
+  return { exhibitions, artists, editions, events, settings };
 }
 
 async function getCms(): Promise<Cms> {
@@ -321,4 +343,8 @@ export async function getEditionArtists(): Promise<Artist[]> {
 
 export async function getSiteSettings(): Promise<Record<string, string>> {
   return (await getCms()).settings;
+}
+
+export async function getEvents(): Promise<Event[]> {
+  return (await getCms()).events;
 }
